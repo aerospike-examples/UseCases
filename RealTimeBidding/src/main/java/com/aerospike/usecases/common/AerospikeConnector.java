@@ -18,10 +18,24 @@ import com.aerospike.client.proxy.AerospikeClientFactory;
  * <p/>
  * This class can handle connection to either Aerospike native or Aerospike Cloud. If using Aerospike
  * native, full options such as TLS certificates can be specified. (PEM format, not JKS)
+ * <p/>
+ * There are 2 ways to use Aerospike Cloud over the default Aerospike client. The most explicit one
+ * is to use the <code>--useCloud</code> option. The other is specifying a single host address that ends in
+ * <code>.asdb.io</code> which is the domain for Aerospike Cloud. 
  * @author tfaulkes
  *
  */
 public class AerospikeConnector {
+    private static final String ASDB_CLOUD_DOMAIN = ".asdb.io";
+
+    static class ParseException extends RuntimeException {
+        private static final long serialVersionUID = 5652947902453765251L;
+
+        public ParseException(String message) {
+            super(message);
+        }
+    }
+    
     private boolean useCloud = false;
     private TlsOptions tls;
     private String hosts;
@@ -31,13 +45,6 @@ public class AerospikeConnector {
     private boolean servicesAlternate;
     private AuthMode authMode;
     
-    static class ParseException extends RuntimeException {
-        private static final long serialVersionUID = 5652947902453765251L;
-
-        public ParseException(String message) {
-            super(message);
-        }
-    }
     
     private SSLOptions parseTlsContext(String tlsContext) {
         SSLOptions options = new SSLOptions();
@@ -93,6 +100,15 @@ public class AerospikeConnector {
         }
     }
     
+    /**
+     * Parse the TLS string to enable connection to the secure Aerospike cluster. This will include both TLS options and
+     * SSL options. For example:
+     * <pre>
+     * --tls '{"context":{"certChain":"cert.pem","privateKey":"key.pem","caCertChain":"cacert.pem"}}
+     * </pre>
+     * @param tlsOptions
+     * @return
+     */
     private TlsOptions parseTlsOptions(String tlsOptions) {
         if (tlsOptions != null) {
             TlsOptions policy = new TlsOptions();
@@ -119,6 +135,11 @@ public class AerospikeConnector {
         return null;
     }
     
+    /**
+     * Return the <code>Options</code> object with the parameters pre-specified to allow connection
+     * to an Aerospike database. This object can be amended with other user-desired options 
+     * @return And <code>Options</code> object
+     */
     public Options getOptions() {
         Options options = new Options();
         options.addOption("h", "hosts", true, 
@@ -138,7 +159,7 @@ public class AerospikeConnector {
                 + "string inlcude 'protocols', 'ciphers', 'revokeCerts', 'context' and 'loginOnly'. For 'context', the value should be a JSON string which "
                 + "can contain keys 'certChain' (path to the certificate chain PEM), 'privateKey' (path to the certificate private key PEM), "
                 + "'caCertChain' (path to the CA certificate PEM), 'keyPassword' (password used for the certificate chain PEM), 'tlsHost' (the tlsName of the Aerospike host). "
-                + "For example: --tls1 '{\"context\":{\"certChain\":\"cert.pem\",\"privateKey\":\"key.pem\",\"caCertChain\":\"cacert.pem\",\"tlsHost\":\"tls1\"}}'");
+                + "For example: --tls '{\"context\":{\"certChain\":\"cert.pem\",\"privateKey\":\"key.pem\",\"caCertChain\":\"cacert.pem\"}}'");
         options.addOption("a", "authMode", true, "Set the auth mode of cluster1. Default: INTERNAL");
         options.addOption("cn", "clusterName", true, "Set the cluster name");
         options.addOption("sa", "useServicesAlternate", false, "Use services alternative when connecting to the cluster");
@@ -151,7 +172,7 @@ public class AerospikeConnector {
      * errors, the first one is returned as a string. If <pre>null</pre> is returned the connection parameters are valid.
      * <p/>
      * Note that this method does not attempt to connect to the cluster. Use <pre>connect()</pre> for that.
-     * @param cl
+     * @param cl - the command line containing the passed options
      * @return
      */
     public String validateConnectionsOptions(CommandLine cl) {
@@ -169,6 +190,9 @@ public class AerospikeConnector {
         if (this.hosts == null) {
             return "Hosts must be specified";
         }
+        if (this.hosts.indexOf(',') < 0 && this.hosts.endsWith(ASDB_CLOUD_DOMAIN)) {
+            useCloud = true;
+        }
         
         if (this.userName != null && this.password == null) {
             java.io.Console console = System.console();
@@ -185,6 +209,11 @@ public class AerospikeConnector {
         return null;
     }
 
+    /**
+     * Return the TlsPolicy as a String
+     * @param policy
+     * @return
+     */
     private String tlsPolicyAsString(TlsPolicy policy) {
         if (policy == null) {
             return "null";
@@ -217,11 +246,11 @@ public class AerospikeConnector {
     public IAerospikeClient connect(ClientPolicy clientPolicy) {
         clientPolicy.user = this.getUserName();
         clientPolicy.password = this.getPassword();
-        clientPolicy.tlsPolicy = this.getTls() == null ? null : this.getTls().toTlsPolicy();
+        clientPolicy.tlsPolicy = this.useCloud ? new TlsPolicy() : this.getTls() == null ? null : this.getTls().toTlsPolicy();
         clientPolicy.authMode = this.getAuthMode();
         clientPolicy.clusterName = this.getClusterName();
         clientPolicy.useServicesAlternate = this.isServicesAlternate();
-        Host[] hosts = Host.parseHosts(this.hosts, 3000);
+        Host[] hosts = Host.parseHosts(this.hosts, useCloud ? 4000 : 3000);
         IAerospikeClient client = AerospikeClientFactory.getClient(clientPolicy, useCloud, hosts);
 
         Log.info(String.format("Cluster: name: %s, hosts: %s user: %s, password: %s\n"

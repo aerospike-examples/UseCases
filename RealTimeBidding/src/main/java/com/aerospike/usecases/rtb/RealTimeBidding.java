@@ -2,7 +2,9 @@ package com.aerospike.usecases.rtb;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -51,6 +53,17 @@ public class RealTimeBidding {
             usage(options);
         }
     }
+    
+    private static StorageEngine getStorageEngine(CommandLine cl, IAerospikeClient client, boolean useCloud) {
+        String algorithm = cl.getOptionValue("algorithm", "native");
+        String namespace = useCloud ? "aerospike_cloud" : "test";
+        StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper") ?
+                new ObjectMapperStorageEngine(client, namespace) :
+                new NativeStorageEngine(client, namespace);
+        Log.info("Using " + storageEngine);
+        return storageEngine;
+    }
+    
     public static void main(String[] args) throws Exception {
         Log.setCallbackStandard();
         AerospikeConnector connector = new AerospikeConnector();
@@ -58,13 +71,16 @@ public class RealTimeBidding {
         options.addRequiredOption("c", "command", true, "The commnad to execute. Valid commands are:"
                 + "\t getId -- given an integer key for a device, return the database key\n"
                 + "\t generate -- take the numDevices, numSegments options and optionally the algorithm and numThreads and generate the required number of devices\n"
+                + "\t insertSegment -- take a device id, a segment id and a partner id, and insert the segment into the database and remove any expired segments\n"
                 + "\t getSegments -- take the integer key for a device and optionally the algorithm and return the list of active segments for that device");
-        options.addOption("d", "device", true, "Specify the device id (number) to use in request");
+        options.addOption("d", "device", true, "Specify the device id (number) to use in request. The device id will be turned into a true string id.");
+        options.addOption("s", "segment", true, "Specify the segment id (number) to use in request");
+        options.addOption("p", "partner", true, "Specify the partner id (eg 'www.abcdef.com')");
         options.addOption("nD", "numDevices", true, "The number of devices to generate");
         options.addOption("nS", "numSegments", true, "The number of segment to use when generating. This just constrains the randomly selected segments to this range.");
         options.addOption("aS", "avgSegmentsPerDevice", true, "The average number of segments per device for generation. Defaults to 100");
         options.addOption("nt", "numThreads", true, "The number of threads to use when generating data. Defaults to one thread per CPU core");
-        options.addOption("alg", "algorithm", true, "Use 'native' (default) for raw Aerospike code or 'mapper' to use the Java Object Mapper");
+        options.addOption("alg", "algorithm", true, "Use 'native' (default) for raw Aerospike code or 'mapper' to use the Java Object Mapper. All options which used the database can take this option");
         if (args.length == 0) {
             usage(options);
         }
@@ -84,10 +100,7 @@ public class RealTimeBidding {
             checkRequiredParameter(cl, options, command.toLowerCase(), "numDevices", "numSegments");
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
-                String algorithm = cl.getOptionValue("algorithm", "native");
-                StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper") ?
-                        new ObjectMapperStorageEngine(client) :
-                        new NativeStorageEngine(client);
+                StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
                 DataPopulator populator = new DataPopulator(storageEngine);
                 int numThreads;
                 if (cl.hasOption("numThreads")) {
@@ -104,15 +117,26 @@ public class RealTimeBidding {
             }
             break;
             
+        case "insertsegment":
+            checkRequiredParameter(cl, options, command.toLowerCase(), "device", "segment", "partner");
+            checkConnectionOptions(connector, cl, options);
+            try (IAerospikeClient client = connector.connect()) {
+                StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
+                long deviceId = Long.parseLong(cl.getOptionValue("device"));
+                long segmentId = Long.parseLong(cl.getOptionValue("segment"));
+                String partner = cl.getOptionValue("partner");
+                long epoch = new Date().getTime() + TimeUnit.DAYS.toMillis(DataPopulator.DAYS_TO_KEEP_SEGMENTS);
+                storageEngine.insertSegmentAndRemoveExpired(Device.idToString(deviceId), 
+                        new SegmentInstance(segmentId, new Date(epoch), 1, partner));
+                System.out.println("Successfully inserted");
+            }
+            break;
+            
         case "getsegments":
             checkRequiredParameter(cl, options, command.toLowerCase(), "device");
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
-                String algorithm = cl.getOptionValue("algorithm", "native");
-                StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper") ?
-                        new ObjectMapperStorageEngine(client) :
-                        new NativeStorageEngine(client);
-                
+                StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
                 long thisId = Long.parseLong(cl.getOptionValue("device")); 
                 List<SegmentInstance> results = storageEngine.getActiveSegments(Device.idToString(thisId));
                 if (results != null) {

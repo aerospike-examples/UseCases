@@ -23,7 +23,7 @@ import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 
 public class NativeStorageEngine implements StorageEngine {
-    private static final String NAMESPACE = "test";
+    private final String NAMESPACE;
     private static final String SET_NAME = "devices";
     
     private static final String SEGMENT_NAME = "segments";
@@ -32,7 +32,8 @@ public class NativeStorageEngine implements StorageEngine {
     private final WritePolicy writePolicy;
     private final IAerospikeClient client;
     
-    public NativeStorageEngine(IAerospikeClient client) {
+    public NativeStorageEngine(IAerospikeClient client, String namespace) {
+        this.NAMESPACE = namespace;
         WritePolicy writePolicy = new WritePolicy(client.getWritePolicyDefault());
         writePolicy.sendKey = true;
         this.writePolicy = writePolicy;
@@ -81,6 +82,12 @@ public class NativeStorageEngine implements StorageEngine {
                 MapOperation.put(MapPolicy.Default, "segments", Value.get(segment.getSegmentId()), Value.get(data)));
     }
 
+    /**
+     * Convert a <code>SimpleEntry</code> into a <code>SegmentInstance</code>, unpacking the appropriate
+     * key and list values into the appropriate parts of the structure
+     * @param entry
+     * @return
+     */
     public SegmentInstance toSegmentInstance(SimpleEntry<Long, Object> entry) {
         SegmentInstance result = new SegmentInstance();
         result.setSegmentId(entry.getKey());
@@ -100,8 +107,30 @@ public class NativeStorageEngine implements StorageEngine {
                 MapOperation.getByValueRange(SEGMENT_NAME, Value.get(Arrays.asList(now)), Value.INFINITY, MapReturnType.KEY_VALUE));
         
         // This is returned as an ordered list of SimpleEntry
-        List<SimpleEntry> segments = (List<SimpleEntry>) record.getList(SEGMENT_NAME);
+        List<SimpleEntry<Long, Object>> segments = (List<SimpleEntry<Long, Object>>) record.getList(SEGMENT_NAME);
         return segments.stream().map(this::toSegmentInstance).collect(Collectors.toList());
+    }
+    
+    @Override
+    public String toString() {
+        return "NativeStorageEngine";
+    }
+
+    @Override
+    public List<Long> getActiveSegmentIds(String deviceId) {
+        long now = new Date().getTime();
+        Record record = client.operate(
+                writePolicy, 
+                getDeviceKey(deviceId), 
+                MapOperation.getByValueRange(SEGMENT_NAME, Value.get(Arrays.asList(now)), Value.INFINITY, MapReturnType.KEY));
+        System.out.println(record);
+        return null;
+    }
+
+    @Override
+    public java.lang.Record getCountOfActiveAndExpiredSegments(String deviceId) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
 

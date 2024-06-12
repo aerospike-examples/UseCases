@@ -8,6 +8,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
+import com.aerospike.client.Log;
+import com.aerospike.usecases.common.MonitorService;
 import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 
@@ -43,9 +46,11 @@ public class DataPopulator {
      * @param endDevice
      * @param avgSegmentsPerDevice
      */
-    private void generateDevices(long numberOfSegments, long startDevice, long endDevice, long avgSegmentsPerDevice) {
-        System.out.printf("    generateDevices(%d, %d, %d, %d)\n", 
-                numberOfSegments, startDevice, endDevice, avgSegmentsPerDevice);
+    private void generateDevices(TimingMetric timer, long numberOfSegments, long startDevice, long endDevice, long avgSegmentsPerDevice) {
+        if (Log.debugEnabled()) {
+            Log.debug(String.format("    generateDevices(%d, %d, %d, %d)\n", 
+                numberOfSegments, startDevice, endDevice, avgSegmentsPerDevice));
+        }
         Random random = ThreadLocalRandom.current();
         long now = new Date().getTime();
         
@@ -59,7 +64,9 @@ public class DataPopulator {
             }
 
             try {
+                long startTime = System.nanoTime();
                 this.storageEngine.saveDevice(device);
+                timer.addTime(System.nanoTime() - startTime);
                 this.devicesInserted.incrementAndGet();
                 this.segmentsCreated.addAndGet(device.getSegments().size());
             }
@@ -71,16 +78,21 @@ public class DataPopulator {
     }
     
     public void generateDevices(long numberOfSegments, long numberOfDevices, long avgSegmentsPerDevice, int numberOfThreads) {
-        System.out.printf("generateDevices(%d, %d, %d, %d)\n", 
-                numberOfSegments, numberOfDevices, avgSegmentsPerDevice, numberOfThreads);
+        if (Log.debugEnabled()) {
+            Log.debug(String.format("generateDevices(%d, %d, %d, %d)\n", 
+                    numberOfSegments, numberOfDevices, avgSegmentsPerDevice, numberOfThreads));
+        }
+        TimingMetric timer = new TimingMetric("timer", "");
+        MonitorService monitor = new MonitorService(timer);
         ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         long remainingDevices = numberOfDevices;
+        monitor.startMonitoring();
         for (int i = 0; i < numberOfThreads; i++) {
             final long thisDevices = remainingDevices / (numberOfThreads-i);
             final long startDevice = numberOfDevices - remainingDevices;
             remainingDevices -= thisDevices;
             executor.submit(() -> {
-                this.generateDevices(numberOfSegments, startDevice, startDevice + thisDevices, avgSegmentsPerDevice);
+                this.generateDevices(timer, numberOfSegments, startDevice, startDevice + thisDevices, avgSegmentsPerDevice);
             });
         }
         executor.shutdown();
@@ -90,6 +102,7 @@ public class DataPopulator {
         catch (InterruptedException ignored) {
             System.out.println("Ignoring InterruptedException");
         }
+        monitor.endMonitoring();
         System.out.flush();
     }
 }
