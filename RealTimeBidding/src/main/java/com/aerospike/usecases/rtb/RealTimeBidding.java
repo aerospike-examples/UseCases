@@ -14,6 +14,7 @@ import org.apache.commons.cli.Options;
 
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Log;
+import com.aerospike.client.Record;
 import com.aerospike.usecases.common.AerospikeConnector;
 import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
@@ -72,7 +73,8 @@ public class RealTimeBidding {
                 + "\t getId -- given an integer key for a device, return the database key\n"
                 + "\t generate -- take the numDevices, numSegments options and optionally the algorithm and numThreads and generate the required number of devices\n"
                 + "\t insertSegment -- take a device id, a segment id and a partner id, and insert the segment into the database and remove any expired segments\n"
-                + "\t getSegments -- take the integer key for a device and optionally the algorithm and return the list of active segments for that device");
+                + "\t getSegments -- take the integer key for a device and optionally the algorithm and return the list of active segments for that device"
+                + "\t showSegmentStats -- given an integer key for a device, return the number of active and expired segments\n");
         options.addOption("d", "device", true, "Specify the device id (number) to use in request. The device id will be turned into a true string id.");
         options.addOption("s", "segment", true, "Specify the segment id (number) to use in request");
         options.addOption("p", "partner", true, "Specify the partner id (eg 'www.abcdef.com')");
@@ -140,13 +142,25 @@ public class RealTimeBidding {
                 long thisId = Long.parseLong(cl.getOptionValue("device")); 
                 List<SegmentInstance> results = storageEngine.getActiveSegments(Device.idToString(thisId));
                 if (results != null) {
+                    int count= 0;
                     for (SegmentInstance segment : results) {
-                        System.out.println(segment);
+                        System.out.printf("%d: %s\n", ++count, segment);
                     }
                 }
             }
             break;
             
+        case "showsegmentstats":
+            checkRequiredParameter(cl, options, command.toLowerCase(), "device");
+            checkConnectionOptions(connector, cl, options);
+            try (IAerospikeClient client = connector.connect()) {
+                StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
+                long deviceId = Long.parseLong(cl.getOptionValue("device"));
+                Record record = storageEngine.getCountOfActiveAndExpiredSegments(Device.idToString(deviceId));
+                System.out.printf("Device id %s has %d active segments and %d expired segments",
+                        Device.idToString(deviceId), record.getLong("active"), record.getLong("expired"));
+            }
+            break;
         default:
             System.out.printf("Unknown command: \"%s\"\n", command.toLowerCase());
             usage(options);

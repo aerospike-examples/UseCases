@@ -18,6 +18,9 @@ import com.aerospike.client.cdt.MapOrder;
 import com.aerospike.client.cdt.MapPolicy;
 import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
+import com.aerospike.client.exp.Exp;
+import com.aerospike.client.exp.ExpOperation;
+import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
@@ -116,7 +119,12 @@ public class NativeStorageEngine implements StorageEngine {
         return "NativeStorageEngine";
     }
 
-    @Override
+    /**
+     * Return a list of just the device ids instead of the whole segements. This is shown here as an example of what can 
+     * be achieved with the lower level interface.
+     * @param deviceId
+     * @return
+     */
     public List<Long> getActiveSegmentIds(String deviceId) {
         long now = new Date().getTime();
         Record record = client.operate(
@@ -128,9 +136,21 @@ public class NativeStorageEngine implements StorageEngine {
     }
 
     @Override
-    public java.lang.Record getCountOfActiveAndExpiredSegments(String deviceId) {
-        // TODO Auto-generated method stub
-        return null;
+    public Record getCountOfActiveAndExpiredSegments(String deviceId) {
+        long now = new Date().getTime();
+        Record record = client.operate(
+                writePolicy, 
+                getDeviceKey(deviceId),
+                ExpOperation.read("expired", 
+                        Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.nil(), Exp.val(Arrays.asList(now)), Exp.mapBin(SEGMENT_NAME))), 
+                        MapWriteFlags.DEFAULT
+                ),
+                ExpOperation.read("active", 
+                        Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.val(Arrays.asList(now)), Exp.inf(), Exp.mapBin(SEGMENT_NAME))), 
+                        MapWriteFlags.DEFAULT
+                )
+            );
+        return record;
     }
 }
 

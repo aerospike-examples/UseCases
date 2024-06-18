@@ -2,6 +2,7 @@ package com.aerospike.usecases.rtb;
 
 import java.util.List;
 
+import com.aerospike.client.Record;
 import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 
@@ -26,14 +27,6 @@ public interface StorageEngine {
      * @return
      */
     List<SegmentInstance> getActiveSegments(String deviceId);
-    
-    /**
-     * Get a list of the non-expired segment ids associated with the passed device. Only
-     * the segment ids are returned, not the other segment data
-     * @param deviceId
-     * @return
-     */
-    List<Long> getActiveSegmentIds(String deviceId);
     
     /**
      * Return counts of the active segments and the expired segments associated with

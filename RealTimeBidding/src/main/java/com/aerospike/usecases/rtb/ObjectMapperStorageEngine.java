@@ -1,11 +1,20 @@
 package com.aerospike.usecases.rtb;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.aerospike.client.Record;
+import com.aerospike.client.cdt.MapReturnType;
+import com.aerospike.client.cdt.MapWriteFlags;
+import com.aerospike.client.exp.Exp;
+import com.aerospike.client.exp.ExpOperation;
+import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.mapper.tools.AeroMapper;
+import com.aerospike.mapper.tools.ClassCache;
+import com.aerospike.mapper.tools.ClassCacheEntry;
 import com.aerospike.mapper.tools.configuration.ClassConfig;
 import com.aerospike.mapper.tools.virtuallist.ReturnType;
 import com.aerospike.mapper.tools.virtuallist.VirtualList;
@@ -53,14 +62,20 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     }
 
     @Override
-    public List<Long> getActiveSegmentIds(String deviceId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Record getCountOfActiveAndExpiredSegments(String deviceId) {
-        // TODO Auto-generated method stub
-        return null;
+        long now = new Date().getTime();
+        Record record = mapper.getClient().operate(
+                mapper.getWritePolicy(Device.class), 
+                mapper.getRecordKey(deviceId),
+                ExpOperation.read("expired", 
+                        Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.nil(), Exp.val(Arrays.asList(now)), Exp.mapBin("segments"))), 
+                        MapWriteFlags.DEFAULT
+                ),
+                ExpOperation.read("active", 
+                        Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.val(Arrays.asList(now)), Exp.inf(), Exp.mapBin("segments"))), 
+                        MapWriteFlags.DEFAULT
+                )
+            );
+        return record;
     }
 }
