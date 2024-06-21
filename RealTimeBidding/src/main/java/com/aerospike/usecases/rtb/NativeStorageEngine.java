@@ -74,15 +74,15 @@ public class NativeStorageEngine implements StorageEngine {
 
     @Override
     public void insertSegmentAndRemoveExpired(String deviceId, SegmentInstance segment) {
-        List<Object> data = new ArrayList<>();
-        data.add(segment.getExpiry() == null ? 0 : segment.getExpiry().getTime());
-        data.add(segment.getFlags());
-        data.add(segment.getPartnerId());
-        long now = new Date().getTime();
-        
-        client.operate(writePolicy, getDeviceKey(deviceId),
-                MapOperation.removeByValueRange(SEGMENT_NAME, Value.get(Arrays.asList(0)), Value.get(Arrays.asList(now)), MapReturnType.NONE),
-                MapOperation.put(MapPolicy.Default, "segments", Value.get(segment.getSegmentId()), Value.get(data)));
+            List<Object> data = new ArrayList<>();
+            data.add(segment.getExpiry() == null ? 0 : segment.getExpiry().getTime());
+            data.add(segment.getFlags());
+            data.add(segment.getPartnerId());
+            long now = new Date().getTime();
+            
+            client.operate(writePolicy, getDeviceKey(deviceId),
+                    MapOperation.removeByValueRange(SEGMENT_NAME, Value.get(Arrays.asList(0)), Value.get(Arrays.asList(now)), MapReturnType.NONE),
+                    MapOperation.put(MapPolicy.Default, SEGMENT_NAME, Value.get(segment.getSegmentId()), Value.get(data)));
     }
 
     /**

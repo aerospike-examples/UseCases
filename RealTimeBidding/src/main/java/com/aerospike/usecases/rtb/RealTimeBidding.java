@@ -34,7 +34,7 @@ public class RealTimeBidding {
         System.exit(1);
     }
 
-    public static void checkRequiredParameter(CommandLine cl, Options options, String command, String ...requiredParams) {
+    public static void checkRequiredParameters(CommandLine cl, Options options, String command, String ...requiredParams) {
         boolean hasErrors = false;
         for (String thisParam : requiredParams) {
             if (!cl.hasOption(thisParam)) {
@@ -92,14 +92,14 @@ public class RealTimeBidding {
 
         switch (command.toLowerCase()) {
         case "getid":
-            checkRequiredParameter(cl, options, command.toLowerCase(), "device");
+            checkRequiredParameters(cl, options, command.toLowerCase(), "device");
             long id = Long.parseLong(cl.getOptionValue("device"));
             String key = Device.idToString(id);
             System.out.printf("Device with id %d maps to a database key of %s\n", id, key);
             return;
             
         case "generate":
-            checkRequiredParameter(cl, options, command.toLowerCase(), "numDevices", "numSegments");
+            checkRequiredParameters(cl, options, command.toLowerCase(), "numDevices", "numSegments");
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
@@ -120,7 +120,7 @@ public class RealTimeBidding {
             break;
             
         case "insertsegment":
-            checkRequiredParameter(cl, options, command.toLowerCase(), "device", "segment", "partner");
+            checkRequiredParameters(cl, options, command.toLowerCase(), "device", "segment", "partner");
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
@@ -135,7 +135,7 @@ public class RealTimeBidding {
             break;
             
         case "getsegments":
-            checkRequiredParameter(cl, options, command.toLowerCase(), "device");
+            checkRequiredParameters(cl, options, command.toLowerCase(), "device");
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
@@ -151,13 +151,13 @@ public class RealTimeBidding {
             break;
             
         case "showsegmentstats":
-            checkRequiredParameter(cl, options, command.toLowerCase(), "device");
+            checkRequiredParameters(cl, options, command.toLowerCase(), "device");
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
                 long deviceId = Long.parseLong(cl.getOptionValue("device"));
                 Record record = storageEngine.getCountOfActiveAndExpiredSegments(Device.idToString(deviceId));
-                System.out.printf("Device id %s has %d active segments and %d expired segments",
+                System.out.printf("Device id %s has %d active segments and %d expired segments\n",
                         Device.idToString(deviceId), record.getLong("active"), record.getLong("expired"));
             }
             break;
