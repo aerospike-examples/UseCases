@@ -1,6 +1,12 @@
 # Compiled class file
 *.class
 
+# cluster data
+data/aerospike/*.dat
+
+# feature configuration
+config/aerospike/features.conf
+
 # Log file
 *.log
 
