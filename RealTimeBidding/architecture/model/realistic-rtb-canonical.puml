@@ -1,0 +1,82 @@
+
+
+@startuml
+
+title Realistic RTB 
+canonical model
+
+hide circle
+
+hide empty members
+
+class Profile {
+    - String id
+    - List<Lineitem> lineitems
+    - boolean isFinished
+
+}
+
+enum LineitemStatus {
+    DRAFT
+    ACTIVE
+    PAUSED
+    FINISHED
+}
+
+class Campaign {
+    - String id
+    - String name
+    - List<Lineitem> lineitems
+    - Float budget
+    - DateTime startDate
+    - DateTime endDate
+    - Advertiser advertiser
+}
+
+
+class Lineitem {
+    - String id
+    - String campaignId
+    - Audience audience
+    - List<Creative> creatives
+    - Float budget
+    - DateTime startDate
+    - DateTime endDate
+    - LineitemStatus status
+}
+
+class Audience {
+    - String id
+    - String name
+    - List<Segment> segments
+}
+
+class Advertiser {
+    - String id
+    - String name
+    - List<Campaign> campaigns
+}
+
+
+class Creative {
+    - String id
+    - String name
+    - String url
+    - String format
+    - String size
+    - String type
+}
+
+Campaign "*" <--> "1..*" Lineitem : lineitems
+Advertiser "1" <-> "*" Campaign : campaigns
+Advertiser "*" --> "1..*" Creative : creatives
+Creative "*" <- "*" Lineitem : lineitems
+Lineitem "*" -> "1" Audience : audience
+' Profile "*" --> "1..*" Lineitem : lineitems
+' Audience "*" -> "1..*" Segment : segments
+' Lineitem "*" -> "1..*" Creative : creatives
+LineitemStatus -- Lineitem
+Lineitem -- Profile
+
+
+@enduml

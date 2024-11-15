@@ -1,0 +1,30 @@
+
+@startuml
+
+title Simple RTB canonical model
+
+hide circle
+
+hide empty members
+
+    class Device {
+        - String id
+        - List<SegmentInstance> segments
+        - boolean isFinished
+        + Device()
+        + Device(String id)
+        + static String idToString(long id)
+    }
+
+    class SegmentInstance {
+        - String id
+        - Date expiry
+        - long flags
+        - String partnerId
+    
+    }
+
+     Device "*" -> "1..*" SegmentInstance : segments
+
+@enduml
+
