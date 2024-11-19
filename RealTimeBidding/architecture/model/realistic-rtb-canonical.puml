@@ -2,8 +2,7 @@
 
 @startuml
 
-title Realistic RTB 
-canonical model
+title Realistic RTB canonical model
 
 hide circle
 
@@ -51,6 +50,15 @@ class Audience {
     - List<Segment> segments
 }
 
+class Segment {
+  +String id
+  +String name
+  ...etc
+}
+
+
+
+
 class Advertiser {
     - String id
     - String name
@@ -70,13 +78,140 @@ class Creative {
 Campaign "*" <--> "1..*" Lineitem : lineitems
 Advertiser "1" <-> "*" Campaign : campaigns
 Advertiser "*" --> "1..*" Creative : creatives
-Creative "*" <- "*" Lineitem : lineitems
+Creative "*" <- "*" Lineitem : creatives
 Lineitem "*" -> "1" Audience : audience
-' Profile "*" --> "1..*" Lineitem : lineitems
-' Audience "*" -> "1..*" Segment : segments
-' Lineitem "*" -> "1..*" Creative : creatives
 LineitemStatus -- Lineitem
-Lineitem -- Profile
+Lineitem "1..20" -- "*" Profile
+Audience "*" -> "1..*" Segment : segments
 
 
+@enduml
+
+@startuml
+
+title RTB realtime model
+
+hide circle
+
+hide empty members
+
+class Profile {
+    - String id
+    - List<Lineitem> lineitems
+    - boolean isFinished
+
+}
+
+enum LineitemStatus {
+    DRAFT
+    ACTIVE
+    PAUSED
+    FINISHED
+}
+
+
+
+class Lineitem {
+    - String id
+    - String campaignId
+    - Audience audience
+    - List<Creative> creatives
+    - Float budget
+    - DateTime startDate
+    - DateTime endDate
+    - LineitemStatus status
+}
+
+class Audience {
+    - String id
+    - String name
+    - List<Segment> segments
+}
+
+class Segment {
+  +String id
+  +String name
+  ...etc
+}
+
+class Creative {
+    - String id
+    - String name
+    - String url
+    - String format
+    - String size
+    - String type
+}
+
+Creative "*" <- "*" Lineitem : creatives
+Lineitem "*" -> "1" Audience : audience
+LineitemStatus -- Lineitem
+Lineitem "1..20" -- "*" Profile
+
+Audience "*" -> "1..*" Segment : segments
+
+
+@enduml
+
+@startuml
+
+title Audience model
+
+hide circle
+hide empty members
+
+class Audience {
+    - String id
+    - String name
+    - List<Segment> segments
+}
+
+class Segment {
+  +String id
+  +String name
+  +String description
+  +Date creationDate
+  +Date lastUpdated
+  +Criteria criteria
+  +String source
+  +Date expiryDate
+  +int audienceSize
+  +String segmentType
+  +List<Lineitems> lineitems
+  +PerformanceMetrics performanceMetrics
+}
+
+class Criteria {
+  +Demographics demographics
+  +BehavioralData behavioralData
+  +List<String> interests
+  ...etc
+}
+
+class Demographics {
+  +String ageRange
+  +String gender
+  +String location
+  ...etc
+}
+
+class BehavioralData {
+  +List<String> browsingHistory
+  +List<String> purchaseHistory
+  ...etc
+}
+
+class PerformanceMetrics {
+  +float clickThroughRate
+  +float conversionRate
+  ...etc
+}
+
+Audience "*" -> "1..*" Segment : segments
+
+Segment "1" -- "1" Criteria
+Criteria "1" -- "1" Demographics
+Criteria "1" -- "1" BehavioralData
+Segment "1" -- "1" PerformanceMetrics
+Segment "*" - "1..*" Lineitems : lineitems
 @enduml
