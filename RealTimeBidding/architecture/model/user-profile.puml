@@ -1,0 +1,73 @@
+
+
+@startuml
+
+title User Profile model
+
+hide circle
+hide empty members
+
+class UserProfile {
+  +String userId
+  +Demographics demographics
+  +List<Lineitem> linitems
+  +BehavioralData behavioralData
+  +DeviceInfo deviceInfo
+  +CreativeInteractions creativeInteractions
+  ...etc
+}
+
+class Demographics {
+  +int age
+  +String gender
+  +String location
+  ...etc
+}
+
+class Lineitem {
+    - String id
+    ...
+    - Audience audience
+    - List<Creative> creatives
+    - Float budget
+    - DateTime startDate
+    - DateTime endDate
+    - LineitemStatus status
+    ...etc
+}
+
+class BehavioralData {
+  +List<String> browsingHistory
+  +List<Purchase> purchaseHistory
+}
+
+class Purchase {
+  +String transactionId
+  +String itemId
+  +Date date
+}
+
+class DeviceInfo {
+  +String deviceType
+  +String os
+  +String browser
+}
+
+class CreativeInteraction {
+  +String creativeId
+  +int clicks
+  +int impressions
+  +int conversions
+}
+
+
+Demographics <- UserProfile 
+UserProfile --> BehavioralData
+UserProfile --> "1..*" DeviceInfo
+UserProfile --> "*" CreativeInteraction
+BehavioralData  --> "*" Purchase
+UserProfile "*" - "1..20" Lineitem : lineitems
+
+
+@enduml
+
