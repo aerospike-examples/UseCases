@@ -7,13 +7,8 @@ public class Audience {
     private String id;
     private List<Segment> segments;
 
-    public Audience() {
-        this.segments = new ArrayList<Segment>();
-
-    }
-
     public Audience(String id) {
-        this();
+        this.segments = new ArrayList<Segment>();
         this.id = id;
     }
 
@@ -27,5 +22,9 @@ public class Audience {
 
     public void addSegment(Segment segment) {
         this.segments.add(segment);
+    }
+
+    public void setSegments(List<Segment> segments) {
+        this.segments = segments;
     }
 }
