@@ -1,12 +1,15 @@
 package com.aerospike.usecases.rtb;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Log;
 import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
 import com.aerospike.usecases.rtb.model.Campaign;
+import com.aerospike.usecases.rtb.model.Creative;
 import com.aerospike.usecases.rtb.model.Demographics;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.UserProfile;
@@ -32,26 +35,48 @@ public class MockDataGenerator {
                 // generate a random number of lineitems for this campaign, between 5 and 50
                 int numberOfLineitems = ThreadLocalRandom.current().nextInt(5, 50);
                 List<Lineitem> lineitems = RandomData.generateLineitems(numberOfLineitems, campaign);
+                // for each lineitem generate a random creative
+                List<Creative> creatives = new ArrayList<Creative>();
+                for (Lineitem lineitem : lineitems) {
+
+                    String advertiserId = campaign.getAdvertiserId();
+                    Creative creative = RandomData.randomCreative(advertiserId, lineitem.getId());
+                    creatives.add(creative);
+                    lineitem.addCreative(creative);
+
+                }
+
+                campaign.setLineitems(lineitems);
 
                 long startTime = System.nanoTime();
 
                 // save the campaign and lineitems
                 this.storageEngine.saveCampaign(campaign);
-                System.out.println("Saved campaign id: " + campaign.getId());
                 this.storageEngine.saveLineitems(lineitems);
+                this.storageEngine.saveCreatives(creatives);
 
                 // // map the lineitems to 50 random users
                 for (int i = 0; i < 50; i++) {
-                    String randomUserId = String.valueOf(ThreadLocalRandom.current().nextLong(startUser, endUser + 1));
-                    UserProfile userProfile = this.storageEngine.fetchUser(randomUserId);
-                    // assign a random number of lineitems to this user
-                    int numberOfLineitemsToAssign = ThreadLocalRandom.current().nextInt(2, 6);
-                    for (int j = 0; j < numberOfLineitemsToAssign; j++) {
-                        Lineitem lineitem = lineitems.get(ThreadLocalRandom.current().nextInt(lineitems.size()));
-                        userProfile.addLineitem(lineitem);
-                    }
-                    this.storageEngine.saveUser(userProfile);
+                    try {
+                        String randomUserId = String
+                                .valueOf(ThreadLocalRandom.current().nextLong(startUser, endUser + 1));
+                        UserProfile userProfile = this.storageEngine.fetchUser(randomUserId);
+                        if (userProfile == null) {
+                            // user does not exist, skip
+                            continue;
+                        }
+                        // assign a random number of lineitems to this user
+                        int numberOfLineitemsToAssign = ThreadLocalRandom.current().nextInt(2, 6);
+                        for (int j = 0; j < numberOfLineitemsToAssign; j++) {
+                            Lineitem lineitem = lineitems.get(ThreadLocalRandom.current().nextInt(lineitems.size()));
+                            userProfile.addLineitem(lineitem);
+                        }
+                        // save the user with the linieitems
+                        this.storageEngine.saveUser(userProfile);
+                    } catch (Exception e) {
+                        e.printStackTrace();
 
+                    }
                 }
 
                 timer.addTime(System.nanoTime() - startTime);
@@ -74,7 +99,6 @@ public class MockDataGenerator {
                             RandomData.randomEducationLevel(), RandomData.randomEmploymentStatus(),
                             RandomData.randomMaritalStatus()),
                     RandomData.randomLocation());
-            // System.out.println("User Profile id: " + userProfile.getId());
 
             try {
                 long startTime = System.nanoTime();

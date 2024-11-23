@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.aerospike.mapper.annotations.AerospikeEmbed;
+import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
 import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
@@ -20,6 +22,7 @@ public class Campaign {
     String name;
     String description;
     String advertiserId;
+    @AerospikeEmbed(type = EmbedType.LIST)
     List<String> lineitemIds;
     LocalDateTime startDate;
     LocalDateTime endDate;

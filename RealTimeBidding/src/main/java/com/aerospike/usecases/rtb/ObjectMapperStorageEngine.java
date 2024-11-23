@@ -17,7 +17,10 @@ import com.aerospike.mapper.tools.configuration.ClassConfig;
 import com.aerospike.mapper.tools.virtuallist.ReturnType;
 import com.aerospike.mapper.tools.virtuallist.VirtualList;
 import com.aerospike.usecases.rtb.model.Campaign;
+import com.aerospike.usecases.rtb.model.Creative;
+import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
+import com.aerospike.usecases.rtb.model.SegmentInstance;
 import com.aerospike.usecases.rtb.model.UserProfile;
 
 public class ObjectMapperStorageEngine implements StorageEngine {
@@ -35,13 +38,6 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     @Override
     public void saveUser(UserProfile user) {
         mapper.save(user);
-    }
-
-    @Override
-    public void insertLineitemAndRemoveInactive(String userId, Lineitem lineitem) {
-        VirtualList<Lineitem> virtualList = mapper.asBackedList(UserProfile.class, userId, "lineitems", Lineitem.class);
-        virtualList.beginMultiOperation().append(lineitem).removeByValueRange(null, new Date().getTime()).end();
-
     }
 
     @Override
@@ -89,5 +85,36 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     @Override
     public UserProfile fetchUser(String userId) {
         return mapper.read(UserProfile.class, userId);
+    }
+
+    @Override
+    public void saveDevice(Device device) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveDevice'");
+    }
+
+    @Override
+    public void insertSegmentAndRemoveExpired(String deviceId, SegmentInstance segment) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'insertSegmentAndRemoveExpired'");
+    }
+
+    @Override
+    public List<SegmentInstance> getActiveSegments(String deviceId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getActiveSegments'");
+    }
+
+    @Override
+    public Record getCountOfActiveAndExpiredSegments(String deviceId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCountOfActiveAndExpiredSegments'");
+    }
+
+    @Override
+    public void saveCreatives(List<Creative> creatives) {
+        for (Creative creative : creatives) {
+            mapper.save(creative);
+        }
     }
 }

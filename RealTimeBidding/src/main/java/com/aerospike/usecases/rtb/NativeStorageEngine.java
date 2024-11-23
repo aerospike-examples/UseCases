@@ -23,6 +23,7 @@ import com.aerospike.client.exp.ExpOperation;
 import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.usecases.rtb.model.Campaign;
+import com.aerospike.usecases.rtb.model.Creative;
 import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
@@ -180,12 +181,6 @@ public class NativeStorageEngine implements StorageEngine {
     }
 
     @Override
-    public void insertLineitemAndRemoveInactive(String userId, Lineitem lineitem) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertLineitemAndRemoveInactive'");
-    }
-
-    @Override
     public List<Lineitem> getActiveLineitems(String userId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getActiveLineitems'");
@@ -196,4 +191,11 @@ public class NativeStorageEngine implements StorageEngine {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getCountLineitems'");
     }
+
+    @Override
+    public void saveCreatives(List<Creative> creatives) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveCreatives'");
+    }
+
 }

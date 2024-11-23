@@ -93,6 +93,10 @@ public class Lineitem {
         this.creativeIds.add(creativeId);
     }
 
+    public void addCreative(Creative creative) {
+        this.creativeIds.add(creative.getId());
+    }
+
     public void setStatus(LineitemStatus status) {
         this.status = status;
     }

@@ -8,14 +8,18 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.usecases.rtb.model.Campaign;
+import com.aerospike.usecases.rtb.model.Creative;
 import com.aerospike.usecases.rtb.model.Gender;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.LineitemStatus;
 import com.aerospike.usecases.rtb.model.Location;
+import com.aerospike.usecases.rtb.model.Size;
+
 import java.util.UUID;
 
 public class RandomData {
     static List<Location> locations = generateLocations();
+    static List<Size> iabBannerSizes = getIABBannerSizes();
 
     private static List<Location> generateLocations() {
         List<Location> locations = new ArrayList<>();
@@ -169,6 +173,46 @@ public class RandomData {
             lineitems.add(lineitem);
         }
         return lineitems;
+    }
+
+    public static List<Size> randomBannerSizes() {
+        Random random = new Random();
+        List<Size> availableSizes = iabBannerSizes;
+
+        List<Size> selectedSizes = new ArrayList<>();
+
+        for (int i = 0; i < availableSizes.size(); i++) {
+            int index = random.nextInt(availableSizes.size());
+            selectedSizes.add(availableSizes.remove(index));
+        }
+
+        return selectedSizes;
+    }
+
+    public static Creative randomCreative(String advertiserId, String lineitemId) {
+        String id = UUID.randomUUID().toString();
+        String name = "Creative " + id;
+        String url = "http://www." + name.replace(" ", "").toLowerCase() + ".com";
+        String type = "image";
+        Creative creative = new Creative(id, name, url, advertiserId, lineitemId, type);
+        creative.setSizes(randomBannerSizes());
+        return creative;
+    }
+
+    private static List<Size> getIABBannerSizes() {
+        List<Size> sizes = new ArrayList<>();
+        sizes.add(new Size(468, 60)); // Full Banner
+        sizes.add(new Size(728, 90)); // Leaderboard
+        sizes.add(new Size(300, 250)); // Medium Rectangle
+        sizes.add(new Size(336, 280)); // Large Rectangle
+        sizes.add(new Size(120, 600)); // Skyscraper
+        sizes.add(new Size(160, 600)); // Wide Skyscraper
+        sizes.add(new Size(300, 600)); // Half Page
+        sizes.add(new Size(970, 90)); // Large Leaderboard
+        sizes.add(new Size(320, 50)); // Mobile Leaderboard
+        sizes.add(new Size(300, 50)); // Mobile Banner
+        sizes.add(new Size(320, 100)); // Large Mobile Banner
+        return sizes;
     }
 
     private static LocalDateTime randomDateBetween(LocalDateTime startInclusive, LocalDateTime endExclusive) {

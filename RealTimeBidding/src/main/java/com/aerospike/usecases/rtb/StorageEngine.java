@@ -5,34 +5,64 @@ import java.util.List;
 import com.aerospike.client.Record;
 import com.aerospike.client.admin.User;
 import com.aerospike.usecases.rtb.model.Campaign;
+import com.aerospike.usecases.rtb.model.Creative;
+import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
+import com.aerospike.usecases.rtb.model.SegmentInstance;
 import com.aerospike.usecases.rtb.model.UserProfile;
 
 public interface StorageEngine {
 
+    void saveDevice(Device device);
+
+    public void insertSegmentAndRemoveExpired(String deviceId, SegmentInstance segment);
+
+    public List<SegmentInstance> getActiveSegments(String deviceId);
+
+    public Record getCountOfActiveAndExpiredSegments(String deviceId)
+
     /**
-     * Save the selected device and associated segments into the database
+     * Save a user profile
      * 
-     * @param device
+     * @param user
      */
     void saveUser(UserProfile user);
 
-    void saveLineitem(Lineitem lineitem);
-
-    void saveLineitems(List<Lineitem> lineitems);
-
-    void saveCampaign(Campaign campaign);
-
-    UserProfile fetchUser(String userId);
-
     /**
-     * Insert a linitem into the passed user and remove any remove any linitems that
-     * are not active
+     * Save a single lineitem
      * 
-     * @param userId
      * @param lineitem
      */
-    void insertLineitemAndRemoveInactive(String userId, Lineitem lineitem);
+    void saveLineitem(Lineitem lineitem);
+
+    /**
+     * Save a list of lineitems
+     * 
+     * @param lineitems
+     */
+    void saveLineitems(List<Lineitem> lineitems);
+
+    /**
+     * Save a campaign
+     * 
+     * @param campaign
+     */
+    void saveCampaign(Campaign campaign);
+
+    /**
+     * Save a list of creatives
+     * 
+     * @param creatives
+     */
+    void saveCreatives(List<Creative> creatives);
+
+    /**
+     * Fetch a user profile
+     * 
+     * @param userId
+     * @return
+     */
+    UserProfile fetchUser(String userId);
 
     /**
      * Get a list of all lineitems associated with the passed userId
