@@ -12,7 +12,7 @@ import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AerospikeRecord(namespace = "test", set = "profiles")
+@AerospikeRecord(namespace = "rtb", set = "profiles")
 @AllArgsConstructor
 @Data
 public class UserProfile {
@@ -21,16 +21,14 @@ public class UserProfile {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     // user demographics
-    @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
+    @AerospikeEmbed(type = EmbedType.MAP)
     private Demographics demographics;
     // simplified interests for the sake of the example
     @AerospikeEmbed(type = EmbedType.LIST)
     private List<String> interests;
     // user location
+    @AerospikeEmbed(type = EmbedType.MAP)
     private Location location;
-    // devices are stored as a list of device
-    @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
-    private List<Device> devices;
     // simplified activity history is a list of URLs
     @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
     private List<ActivityEvent> activity;
@@ -38,37 +36,32 @@ public class UserProfile {
     @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
     private List<Purchase> purchases;
     // eligible lineitem IDs for this user
-    @AerospikeEmbed(type = EmbedType.LIST)
-    private List<String> lineitemIds;
+    @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
+    private List<Lineitem> lineitems;
+
+    public UserProfile() {
+        this.interests = new ArrayList<String>();
+        this.activity = new ArrayList<ActivityEvent>();
+        this.purchases = new ArrayList<Purchase>();
+        this.lineitems = new ArrayList<Lineitem>();
+    }
 
     public UserProfile(String id, Demographics demographics, Location location) {
-
+        this();
         this.id = id;
         this.demographics = demographics;
         this.location = location;
-        this.interests = new ArrayList<String>();
-        this.devices = new ArrayList<Device>();
-        this.activity = new ArrayList<ActivityEvent>();
-        this.purchases = new ArrayList<Purchase>();
-        this.lineitemIds = new ArrayList<String>();
+
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void addLineitem(String lineitemId) {
-        this.lineitemIds.add(lineitemId);
+    public void addLineitem(Lineitem lineitem) {
+        this.lineitems.add(lineitem);
     }
 
-    public void setLineitems(List<String> lineitemIds) {
-        this.lineitemIds = lineitemIds;
-    }
-
-    public void addDevice(Device device) {
-        this.devices.add(device);
-    }
-
-    public void setDevices(List<Device> devices) {
-        this.devices = devices;
+    public void setLineitems(List<Lineitem> lineitems) {
+        this.lineitems = lineitems;
     }
 
     public void addActivityEvent(ActivityEvent activityEvent) {

@@ -1,7 +1,7 @@
 services:
-  usecases-cluster:
+  usecases-core:
     image: aerospike/aerospike-server-enterprise:latest
-    container_name: usecases-cluster
+    container_name: core-usecases
     command: --config-file /etc/aerospike/aerospike.conf
     ports:
       - 3000:3000

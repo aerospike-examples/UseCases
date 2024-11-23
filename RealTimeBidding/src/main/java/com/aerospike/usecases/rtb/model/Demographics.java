@@ -1,10 +1,8 @@
 package com.aerospike.usecases.rtb.model;
 
-enum Gender {
-    MALE, FEMALE, UNKNOWN, OTHER
+import lombok.NoArgsConstructor;
 
-}
-
+@NoArgsConstructor
 public class Demographics {
     private String ageRange;
     private int age;
@@ -17,6 +15,16 @@ public class Demographics {
     public Demographics(String ageRange, int age, Gender gender, String incomeLevel, String educationLevel,
             String employmentStatus, String matitalStatus) {
         this.ageRange = ageRange;
+        this.age = age;
+        this.gender = gender;
+        this.incomeLevel = incomeLevel;
+        this.educationLevel = educationLevel;
+        this.employmentStatus = employmentStatus;
+        this.matitalStatus = matitalStatus;
+    }
+
+    public Demographics(int age, Gender gender, String incomeLevel, String educationLevel, String employmentStatus,
+            String matitalStatus) {
         this.age = age;
         this.gender = gender;
         this.incomeLevel = incomeLevel;

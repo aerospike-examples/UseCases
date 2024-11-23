@@ -2,8 +2,9 @@ package com.aerospike.usecases.rtb.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import org.checkerframework.checker.units.qual.N;
 
 import com.aerospike.mapper.annotations.AerospikeEmbed;
 import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
@@ -13,13 +14,8 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-enum LineitemStatus {
-    ACTIVE, DRAFT, FINISHED, PAUSED
-}
-
-@AerospikeRecord(namespace = "test", set = "lineitems")
+@AerospikeRecord(namespace = "rtb", set = "lineitems")
 @AllArgsConstructor
-@Data
 public class Lineitem {
     @AerospikeKey
     private String id;
@@ -33,6 +29,7 @@ public class Lineitem {
     // The budget of the lineitem
     private int budget;
     // The audience that this lineitem is targeting
+    @AerospikeEmbed(type = EmbedType.MAP)
     private Audience audience;
     // The status of the lineitem
     private LineitemStatus status;
@@ -40,8 +37,13 @@ public class Lineitem {
     @AerospikeEmbed(type = EmbedType.LIST)
     private List<String> creativeIds;
 
+    public Lineitem() {
+        this.creativeIds = new ArrayList<String>();
+    }
+
     public Lineitem(String id, String campaignId, String name, LocalDateTime startDate, LocalDateTime endDate,
             int budget) {
+        this();
         this.id = id;
         this.campaignId = campaignId;
         this.name = name;
@@ -49,7 +51,6 @@ public class Lineitem {
         this.endDate = endDate;
         this.budget = budget;
         this.status = LineitemStatus.DRAFT;
-        this.creativeIds = new ArrayList<String>();
     }
 
     public String getId() {

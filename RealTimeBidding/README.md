@@ -9,53 +9,68 @@ This guide outlines the steps to install and set up the real-time bidding applic
 - AeroMapper: The `ObjectMapperStorageEngine` utilizes the [Java Object Mapper](https://github.com/aerospike/java-object-mapper) for Aerospike. You'll need to include this library as a dependency in your project. Note that this project demonstrates the same functionality both with and without the Java Object Mapper.
 
 ## Installation and Setup Steps:
-1. **Clone the Repository:** Download or clone the code repository containing the provided source files. For example:
+### Clone the Repository
+Download or clone the code repository containing the provided source files. For example:
 ```
-    git clone ​​https://github.com/aerospike-examples/UseCases.git
-```
-
-2. **Build the Project:** Open a terminal or command prompt and navigate to the root directory of the cloned repository.
-```
-    cd UseCases/RealTimeBidding
+git clone ​​https://github.com/aerospike-examples/UseCases.git
 ```
 
-3. **Build the project:** Execute the following Maven command to build the project 
-<pre>
-    mvn clean package
-</pre>
+### Build the Project
+Open a terminal or command prompt and navigate to the root directory of the cloned repository.
+```
+cd UseCases/RealTimeBidding
+```
+
+### Build the project
+Execute the following Maven command to build the project 
+```
+mvn clean package
+```
 This command will download necessary dependencies, compile the code, and package the application into a JAR file.
 
-4. **Configure Aerospike:**  If you haven't already, start an Aerospike server. There are 2 supported ways of doing this: Using native Aerospike, or using Aerospike Cloud.
-    <p/><b>Using native Aerospike:</b>
-    <ol>
-        <li>Create a namespace and set it in your application configuration. The code uses `test` as a default namespace. You can modify this in the `Device` and `SegmentInstance` classes, and in the `RealTimeBidding` class where the `StorageEngine` is initialized.</li>
-        <li>You might need to configure security settings on your Aerospike server, depending on your setup. Ensure the application has the required permissions to interact with the database.</li>
-    </ol>
-    <p/>
-    <b>Using Aerospike Cloud:</b>
-    <ol>
-        <li>Follow the steps at [getting started](https://aerospike.com/docs/cloud/getting-started) to create a cloud account. Then create a database and an API key for it.</li>
-        <li>Gather the Database Hostname (which should end in “`.asdb.io`”), the API Key Name and the API Key Secret. This information will be needed in the next step.</li>
-        <li>Note that the namespace used on Aerospike Cloud by default is `aerospike_cloud`</li>
-    </ol>
+### Configure Aerospike  
+If you haven't already, start an Aerospike server. There are 2 supported ways of doing this: Using native Aerospike, or using Aerospike Cloud.
 
-5. **Run the Application:**
-    After building the project, you can run the application using the following command:
-    ```
-        java -jar target/RealTimeBidding-x.x.x.jar <command-line-options>
-    ```
-    - Replace `x.x.x` with the actual version number of the application.
-    - Use -h <hostname:port> to specify which cluster to connect to. For example, to connect to a cluster running on the local node use -h localhost. The port is optional and will default to 3000 for native Aerospike and 4000 for Aerospike Cloud
-    - To connect to Aerospike Cloud, three parameters must be specified:
-        1. -h &lt;Database Hostname>
-        2. -U &lt;API Key Name>
-        3. -P &lt;API Key Secret>
-    - For example, if the Database Hostname is `abc123.asdb.io`, the API Key Name is `1234abc` and the API Key Secret is `mysecret`, the command line would include
-    ```
-        -h abc123.asdb.io -U 1234abc -P 1234abc
-    ```
-    - The application will default to using Aerospike Cloud if there is just one host name passed and it ends in “`asdb.io`”, or can be forced to use Aerospike Cloud by passing the parameter `--useCloud`.
-    - Refer to the command-line options described in the `RealTimeBidding.java` file to understand how to execute different operations.
+#### Using native Aerospike
+Define a namespace in your application configuration. The code uses `rtb` as a default namespace. You can modify this in these classes:
+- `UserProfile` 
+- `Campaign`
+- `Lineitem`
+- `Segment`
+- `Creative` 
+
+where the `StorageEngine` is initialized.
+
+You might need to configure security settings on your Aerospike server, depending on your setup. Ensure the application has the required permissions to interact with the database.
+   
+#### Using Aerospike Cloud
+
+Follow the steps at [getting started](https://aerospike.com/docs/cloud/getting-started) to create a cloud account. Then create a database and an API key for it.
+
+Gather the Database Hostname (which should end in “`.asdb.io`”), the API Key Name and the API Key Secret. This information will be needed in the next step.
+
+Note that the namespace used on Aerospike Cloud by default is `aerospike_cloud`
+
+
+### Run the Application
+After building the project, you can run the application using the following command:
+
+```
+java -jar target/RealTimeBidding-x.x.x.jar <command-line-options>
+```
+
+- Replace `x.x.x` with the actual version number of the application.
+- Use -h <hostname:port> to specify which cluster to connect to. For example, to connect to a cluster running on the local node use -h localhost. The port is optional and will default to 3000 for native Aerospike and 4000 for Aerospike Cloud
+- To connect to Aerospike Cloud, three parameters must be specified:
+    1. -h &lt;Database Hostname>
+    2. -U &lt;API Key Name>
+    3. -P &lt;API Key Secret>
+- For example, if the Database Hostname is `abc123.asdb.io`, the API Key Name is `1234abc` and the API Key Secret is `mysecret`, the command line would include
+```
+    -h abc123.asdb.io -U 1234abc -P 1234abc
+```
+- The application will default to using Aerospike Cloud if there is just one host name passed and it ends in “`asdb.io`”, or can be forced to use Aerospike Cloud by passing the parameter `--useCloud`.
+- Refer to the command-line options described in the `RealTimeBidding.java` file to understand how to execute different operations.
     
 ## Example Command-Line Usage:
 

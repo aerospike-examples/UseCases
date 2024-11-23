@@ -7,7 +7,7 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.Data;
 
-@AerospikeRecord(namespace = "test", set = "creatives")
+@AerospikeRecord(namespace = "rtb", set = "creatives")
 @Data
 public class Creative {
     @AerospikeKey

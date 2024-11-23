@@ -2,6 +2,9 @@ package com.aerospike.usecases.rtb.model;
 
 import java.time.LocalDateTime;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class Purchase {
     // purchase id
     private String id;

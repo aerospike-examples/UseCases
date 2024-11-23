@@ -1,5 +1,9 @@
+
 package com.aerospike.usecases.rtb.model;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class Location {
     private String country;
     // ISO 3166-1 alpha-2 code

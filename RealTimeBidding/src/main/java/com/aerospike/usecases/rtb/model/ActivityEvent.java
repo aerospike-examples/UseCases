@@ -2,10 +2,13 @@ package com.aerospike.usecases.rtb.model;
 
 import java.time.LocalDateTime;
 
+import lombok.NoArgsConstructor;
+
 enum EventType {
     VIEW, CLICK, IMPRESSION, INCART, PURCHASE
 }
 
+@NoArgsConstructor
 public class ActivityEvent {
     private String id;
     private String pageUrl;
