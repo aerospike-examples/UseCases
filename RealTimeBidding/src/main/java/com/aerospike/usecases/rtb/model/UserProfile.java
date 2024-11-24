@@ -1,6 +1,6 @@
 package com.aerospike.usecases.rtb.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +18,8 @@ import lombok.Data;
 public class UserProfile {
     @AerospikeKey
     private String id;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Date createdAt;
+    private Date updatedAt;
     // user demographics
     @AerospikeEmbed(type = EmbedType.MAP)
     private Demographics demographics;
@@ -52,8 +52,8 @@ public class UserProfile {
         this.demographics = demographics;
         this.location = location;
 
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
     }
 
     public void addLineitem(Lineitem lineitem) {
@@ -81,7 +81,7 @@ public class UserProfile {
     }
 
     public void touch() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = new Date();
     }
 
     public void setLocation(Location location) {

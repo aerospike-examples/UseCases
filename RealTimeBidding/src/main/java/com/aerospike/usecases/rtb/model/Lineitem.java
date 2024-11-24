@@ -1,10 +1,8 @@
 package com.aerospike.usecases.rtb.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.checkerframework.checker.units.qual.N;
 
 import com.aerospike.mapper.annotations.AerospikeEmbed;
 import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
@@ -12,7 +10,6 @@ import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @AerospikeRecord(namespace = "rtb", set = "lineitems")
 @AllArgsConstructor
@@ -24,8 +21,8 @@ public class Lineitem {
     // The name of the lineitem
     private String name;
     // The start and end dates of the lineitem
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private Date startDate;
+    private Date endDate;
     // The budget of the lineitem
     private int budget;
     // The audience that this lineitem is targeting
@@ -41,8 +38,7 @@ public class Lineitem {
         this.creativeIds = new ArrayList<String>();
     }
 
-    public Lineitem(String id, String campaignId, String name, LocalDateTime startDate, LocalDateTime endDate,
-            int budget) {
+    public Lineitem(String id, String campaignId, String name, Date startDate, Date endDate, int budget) {
         this();
         this.id = id;
         this.campaignId = campaignId;
@@ -65,11 +61,11 @@ public class Lineitem {
         return name;
     }
 
-    public LocalDateTime getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 

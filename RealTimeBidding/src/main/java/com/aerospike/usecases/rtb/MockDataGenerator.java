@@ -2,7 +2,6 @@ package com.aerospike.usecases.rtb;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;

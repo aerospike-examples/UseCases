@@ -1,6 +1,6 @@
 package com.aerospike.usecases.rtb.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.NoArgsConstructor;
 
@@ -9,7 +9,7 @@ public class Purchase {
     // purchase id
     private String id;
     // purchase date
-    private LocalDateTime purchaseDate;
+    private Date purchaseDate;
     // product Stock Keeping Unit
     private String productSku;
     private String description;
@@ -38,11 +38,11 @@ public class Purchase {
     // activity event id
     private String activityEventId;
 
-    public Purchase(String id, LocalDateTime purchaseDate, String productSku, String description, double price,
-            String currency, String category, String subCategory, String brand, String model, String color, String size,
+    public Purchase(String id, Date purchaseDate, String productSku, String description, double price, String currency,
+            String category, String subCategory, String brand, String model, String color, String size,
             String condition, String vendorUrl, String productUrl, String activityEventId) {
         this.id = id;
-        this.purchaseDate = LocalDateTime.now();
+        this.purchaseDate = new Date();
         this.productSku = productSku;
         this.description = description;
         this.price = price;
@@ -64,7 +64,7 @@ public class Purchase {
         return id;
     }
 
-    public LocalDateTime getPurchaseDate() {
+    public Date getPurchaseDate() {
         return purchaseDate;
     }
 

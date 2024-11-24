@@ -1,6 +1,6 @@
 package com.aerospike.usecases.rtb.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.NoArgsConstructor;
 
@@ -13,13 +13,13 @@ public class ActivityEvent {
     private String id;
     private String pageUrl;
     private EventType eventType;
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     public ActivityEvent(String id, String pageUrl, EventType eventType) {
         this.id = id;
         this.pageUrl = pageUrl;
         this.eventType = eventType;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Date.now();
     }
 
     public String getId() {
@@ -34,7 +34,7 @@ public class ActivityEvent {
         return eventType;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 

@@ -1,6 +1,6 @@
 package com.aerospike.usecases.rtb.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +10,6 @@ import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @AerospikeRecord(namespace = "rtb", set = "campaigns")
 @AllArgsConstructor
@@ -24,8 +22,8 @@ public class Campaign {
     String advertiserId;
     @AerospikeEmbed(type = EmbedType.LIST)
     List<String> lineitemIds;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    Date startDate;
+    Date endDate;
     int budget;
     int budgetSpent;
     CampaignStatus status;
@@ -34,8 +32,7 @@ public class Campaign {
         this.lineitemIds = new ArrayList<String>();
     }
 
-    public Campaign(String id, String name, String advertiserId, LocalDateTime startDate, LocalDateTime endDate,
-            int budget) {
+    public Campaign(String id, String name, String advertiserId, Date startDate, Date endDate, int budget) {
         this();
         this.id = id;
         this.name = name;
@@ -67,11 +64,11 @@ public class Campaign {
         return lineitemIds;
     }
 
-    public LocalDateTime getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
@@ -99,7 +96,7 @@ public class Campaign {
         this.status = status;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

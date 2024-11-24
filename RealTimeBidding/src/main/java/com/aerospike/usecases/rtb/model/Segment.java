@@ -1,6 +1,6 @@
 package com.aerospike.usecases.rtb.model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import com.aerospike.mapper.annotations.AerospikeEmbed;
@@ -24,8 +24,8 @@ public class Segment {
     private String name;
     private String description;
     private int size;
-    private LocalDateTime creationDate;
-    private LocalDateTime lastUpdated;
+    private Date creationDate;
+    private Date lastUpdated;
     @AerospikeEmbed(type = EmbedType.MAP)
     private DeviceType device;
     @AerospikeEmbed(type = EmbedType.MAP)
@@ -41,8 +41,8 @@ public class Segment {
         this.size = size;
         this.device = device;
         this.demographics = demographics;
-        this.creationDate = LocalDateTime.now();
-        this.lastUpdated = LocalDateTime.now();
+        this.creationDate = new Date();
+        this.lastUpdated = new Date();
     }
 
     public void setDescription(String description) {
@@ -58,7 +58,7 @@ public class Segment {
     }
 
     public void touch() {
-        this.lastUpdated = LocalDateTime.now();
+        this.lastUpdated = new Date();
     }
 
     public List<String> getInterests() {
@@ -85,11 +85,11 @@ public class Segment {
         return size;
     }
 
-    public LocalDateTime getLastUpdated() {
+    public Date getLastUpdated() {
         return lastUpdated;
     }
 
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 

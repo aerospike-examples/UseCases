@@ -1,8 +1,9 @@
 package com.aerospike.usecases.rtb;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -145,9 +146,14 @@ public class RandomData {
     }
 
     public static Campaign randomCampaign() {
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime startDate = today.minusDays(50);
-        LocalDateTime endDate = today.plusDays(365);
+        Date today = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_YEAR, -50);
+        Date startDate = cal.getTime();
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_YEAR, 365);
+        Date endDate = cal.getTime();
 
         int budget = ThreadLocalRandom.current().nextInt(500, 5001);
         String id = UUID.randomUUID().toString();
@@ -159,9 +165,16 @@ public class RandomData {
     public static List<Lineitem> generateLineitems(int lineitemCount, Campaign campaign) {
         List<Lineitem> lineitems = new ArrayList<>();
         for (int i = 0; i < lineitemCount; i++) {
-            LocalDateTime startDate = randomDateBetween(campaign.getStartDate(), campaign.getEndDate().minusDays(30));
-            LocalDateTime endDate = startDate.plusDays(30).isBefore(campaign.getEndDate()) ? startDate.plusDays(30)
-                    : campaign.getEndDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(campaign.getEndDate());
+            cal.add(Calendar.DAY_OF_YEAR, -30);
+            Date endDateMinus30 = cal.getTime();
+            Date startDate = randomDateBetween(campaign.getStartDate(), endDateMinus30);
+
+            cal.setTime(startDate);
+            cal.add(Calendar.DAY_OF_YEAR, 30);
+            Date endDatePlus30 = cal.getTime();
+            Date endDate = endDatePlus30.before(campaign.getEndDate()) ? endDatePlus30 : campaign.getEndDate();
             String id = UUID.randomUUID().toString();
             String campaignId = campaign.getId();
             String name = campaign.getName() + " - Lineitem " + id;
@@ -215,11 +228,10 @@ public class RandomData {
         return sizes;
     }
 
-    private static LocalDateTime randomDateBetween(LocalDateTime startInclusive, LocalDateTime endExclusive) {
-        long startEpoch = startInclusive.atZone(ZoneId.systemDefault()).toEpochSecond();
-        long endEpoch = endExclusive.atZone(ZoneId.systemDefault()).toEpochSecond();
+    private static Date randomDateBetween(Date startInclusive, Date endExclusive) {
+        long startEpoch = startInclusive.getTime();
+        long endEpoch = endExclusive.getTime();
         long randomEpoch = ThreadLocalRandom.current().nextLong(startEpoch, endEpoch);
-        return LocalDateTime.ofEpochSecond(randomEpoch, 0,
-                ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now()));
+        return new Date(randomEpoch);
     }
 }
