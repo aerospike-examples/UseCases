@@ -19,7 +19,7 @@ public class ActivityEvent {
         this.id = id;
         this.pageUrl = pageUrl;
         this.eventType = eventType;
-        this.timestamp = Date.now();
+        this.timestamp = new Date();
     }
 
     public String getId() {

@@ -18,10 +18,10 @@ import com.aerospike.mapper.tools.virtuallist.ReturnType;
 import com.aerospike.mapper.tools.virtuallist.VirtualList;
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 import com.aerospike.usecases.rtb.model.UserProfile;
+import com.aerospike.usecases.rtb.model.Device;
 
 public class ObjectMapperStorageEngine implements StorageEngine {
     // The mapper to do object to Aerospike bidirectional mapping
@@ -41,8 +41,9 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     }
 
     @Override
-    public List<Lineitem> getActiveLineitems(String userId) {
-        VirtualList<Lineitem> virtualList = mapper.asBackedList(UserProfile.class, userId, "lineitems", Lineitem.class);
+    public List<Lineitem> activeLineitemsForProfile(String userProfileId) {
+        VirtualList<Lineitem> virtualList = mapper.asBackedList(UserProfile.class, userProfileId, "lineitems",
+                Lineitem.class);
         return virtualList.getByValueRange(new Date().getTime(), null, ReturnType.ELEMENTS);
     }
 

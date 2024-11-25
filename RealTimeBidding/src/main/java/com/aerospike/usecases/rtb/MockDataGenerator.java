@@ -2,6 +2,7 @@ package com.aerospike.usecases.rtb;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;
@@ -55,6 +56,7 @@ public class MockDataGenerator {
                 this.storageEngine.saveCreatives(creatives);
 
                 // // map the lineitems to 50 random users
+                System.out.println("Mapping lineitems to users");
                 for (int i = 0; i < 50; i++) {
                     try {
                         String randomUserId = String
@@ -77,6 +79,7 @@ public class MockDataGenerator {
 
                     }
                 }
+                System.out.println("Mapped lineitems to users");
 
                 timer.addTime(System.nanoTime() - startTime);
 
@@ -94,20 +97,17 @@ public class MockDataGenerator {
         for (long thisUserProfileId = startUser; thisUserProfileId < endUser; thisUserProfileId++) {
 
             UserProfile userProfile = new UserProfile(String.valueOf(thisUserProfileId),
-                    new Demographics(RandomData.randomAge(), RandomData.randomGender(), RandomData.randomIncomeLevel(),
-                            RandomData.randomEducationLevel(), RandomData.randomEmploymentStatus(),
-                            RandomData.randomMaritalStatus()),
-                    RandomData.randomLocation());
+                    RandomData.randomDemographics(), RandomData.randomLocation());
 
             try {
                 long startTime = System.nanoTime();
                 this.storageEngine.saveUser(userProfile);
                 timer.addTime(System.nanoTime() - startTime);
-                System.out.println("User Profile id: " + userProfile.getId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        System.out.println("Generated " + (endUser - startUser) + " users");
     }
 
     public static void main(String[] args) {

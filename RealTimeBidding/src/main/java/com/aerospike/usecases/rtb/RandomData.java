@@ -10,17 +10,21 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
+import com.aerospike.usecases.rtb.model.Demographics;
 import com.aerospike.usecases.rtb.model.Gender;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.LineitemStatus;
 import com.aerospike.usecases.rtb.model.Location;
 import com.aerospike.usecases.rtb.model.Size;
+import com.aerospike.usecases.rtb.model.Publisher;
+import com.aerospike.usecases.rtb.model.bid.BidRequest;
 
 import java.util.UUID;
 
 public class RandomData {
     static List<Location> locations = generateLocations();
     static List<Size> iabBannerSizes = getIABBannerSizes();
+    static List<String> iabContentCategories = iabContentCatergories();
 
     private static List<Location> generateLocations() {
         List<Location> locations = new ArrayList<>();
@@ -109,6 +113,24 @@ public class RandomData {
 
     public static int randomAge() {
         return ThreadLocalRandom.current().nextInt(21, 76);
+    }
+
+    public static String randomAgeRange() {
+        String[] ageRanges = { "13-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65+" };
+        Random random = new Random();
+        int index = random.nextInt(ageRanges.length);
+        return ageRanges[index];
+    }
+
+    public static Demographics randomDemographics() {
+        String incomeLevel = randomIncomeLevel();
+        String ageRange = randomAgeRange();
+        String educationLevel = randomEducationLevel();
+        String employmentStatus = randomEmploymentStatus();
+        String maritalStatus = randomMaritalStatus();
+        Gender gender = randomGender();
+
+        return new Demographics(gender, ageRange, incomeLevel, educationLevel, employmentStatus, maritalStatus);
     }
 
     public static String randomEducationLevel() {
@@ -233,5 +255,84 @@ public class RandomData {
         long endEpoch = endExclusive.getTime();
         long randomEpoch = ThreadLocalRandom.current().nextLong(startEpoch, endEpoch);
         return new Date(randomEpoch);
+    }
+
+    public static Publisher randomBidRequestPublisher() {
+        String id = UUID.randomUUID().toString();
+        String name = "Publisher " + id;
+        String domain = name.replace(" ", "").toLowerCase() + ".com";
+
+        List<String> categories = randomAdCategories(3, 6);
+
+        Publisher publisher = new Publisher(id, name, domain, categories, null, null);
+        return publisher;
+    }
+
+    public static List<String> randomAdCategories(int origin, int bound) {
+        List<String> categories = new ArrayList<String>();
+        Random random = new Random();
+        int categoryCount = ThreadLocalRandom.current().nextInt(origin, bound);
+        for (int i = 0; i < categoryCount; i++) {
+            int index = random.nextInt(iabContentCategories.size());
+            categories.add(iabContentCategories.get(index));
+        }
+        return categories;
+    }
+
+    public static List<String> iabContentCatergories() {
+        List<String> categories = new ArrayList<>();
+        categories.add("Arts & Entertainment");
+        categories.add("Automotive");
+        categories.add("Business");
+        categories.add("Careers");
+        categories.add("Education");
+        categories.add("Family & Parenting");
+        categories.add("Health & Fitness");
+        categories.add("Food & Drink");
+        categories.add("Hobbies & Interests");
+        categories.add("Home & Garden");
+        categories.add("Law, Gov't & Politics");
+        categories.add("News");
+        categories.add("Personal Finance");
+        categories.add("Pets");
+        categories.add("Real Estate");
+        categories.add("Science");
+        categories.add("Shopping");
+        categories.add("Society");
+        categories.add("Sports");
+        categories.add("Technology & Computing");
+        categories.add("Travel");
+        return categories;
+    }
+
+    public static BidRequest randomBidRequest(long startUserId, long endUserId) {
+        Publisher publisher = randomBidRequestPublisher();
+        String id = UUID.randomUUID().toString();
+        String userId = String.valueOf(ThreadLocalRandom.current().nextLong(startUserId, endUserId + 1));
+        String auctionId = UUID.randomUUID().toString();
+        String siteId = UUID.randomUUID().toString();
+        String appId = UUID.randomUUID().toString();
+        String deviceId = UUID.randomUUID().toString();
+        String ipAddress = "192.168.1." + ThreadLocalRandom.current().nextInt(1, 255);
+        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
+        String adUnitCode = "adunit-" + ThreadLocalRandom.current().nextInt(1, 100);
+        List<String> adFormats = List.of("banner", "video");
+        List<String> adSizes = List.of("300x250", "728x90");
+        List<String> adCategories = randomAdCategories(1, 4);
+        List<String> adKeywords = List.of("sports", "technology");
+        String bidFloor = "0.50";
+        String currency = "USD";
+        String country = "US";
+        String region = "CA";
+        String city = "Los Angeles";
+        String zip = "90001";
+        double latitude = 34.0522;
+        double longitude = -118.2437;
+
+        BidRequest bidRequest = new BidRequest(id, userId, auctionId, siteId, appId, deviceId, ipAddress, userAgent,
+                adUnitCode, adFormats, adSizes, adCategories, adKeywords, bidFloor, currency, country, region, city,
+                zip, latitude, longitude, publisher);
+
+        return bidRequest;
     }
 }

@@ -19,7 +19,7 @@ public interface StorageEngine {
 
     public List<SegmentInstance> getActiveSegments(String deviceId);
 
-    public Record getCountOfActiveAndExpiredSegments(String deviceId)
+    public Record getCountOfActiveAndExpiredSegments(String deviceId);
 
     /**
      * Save a user profile
@@ -65,12 +65,12 @@ public interface StorageEngine {
     UserProfile fetchUser(String userId);
 
     /**
-     * Get a list of all lineitems associated with the passed userId
+     * Get a list of active lineitems associated with the passed userId
      * 
-     * @param userId
+     * @param userProfileId
      * @return
      */
-    List<Lineitem> getActiveLineitems(String userId);
+    List<Lineitem> activeLineitemsForProfile(String userProfileId);
 
     /**
      * Return counts of the active lineitems and the inactive lineitems associated

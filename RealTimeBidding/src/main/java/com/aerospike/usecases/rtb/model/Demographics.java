@@ -1,32 +1,22 @@
 package com.aerospike.usecases.rtb.model;
 
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 public class Demographics {
     private String ageRange;
-    private int age;
     private Gender gender;
     private String incomeLevel;
     private String educationLevel;
     private String employmentStatus;
     private String matitalStatus;
 
-    public Demographics(String ageRange, int age, Gender gender, String incomeLevel, String educationLevel,
+    public Demographics(Gender gender, String ageRange, String incomeLevel, String educationLevel,
             String employmentStatus, String matitalStatus) {
+        this.gender = gender;
         this.ageRange = ageRange;
-        this.age = age;
-        this.gender = gender;
-        this.incomeLevel = incomeLevel;
-        this.educationLevel = educationLevel;
-        this.employmentStatus = employmentStatus;
-        this.matitalStatus = matitalStatus;
-    }
-
-    public Demographics(int age, Gender gender, String incomeLevel, String educationLevel, String employmentStatus,
-            String matitalStatus) {
-        this.age = age;
-        this.gender = gender;
         this.incomeLevel = incomeLevel;
         this.educationLevel = educationLevel;
         this.employmentStatus = employmentStatus;
@@ -35,10 +25,6 @@ public class Demographics {
 
     public String getAgeRange() {
         return ageRange;
-    }
-
-    public int getAge() {
-        return age;
     }
 
     public Gender getGender() {

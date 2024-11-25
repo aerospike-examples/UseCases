@@ -24,10 +24,10 @@ import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 import com.aerospike.usecases.rtb.model.UserProfile;
+import com.aerospike.usecases.rtb.model.Device;
 
 public class NativeStorageEngine implements StorageEngine {
     private final String NAMESPACE;
@@ -181,7 +181,7 @@ public class NativeStorageEngine implements StorageEngine {
     }
 
     @Override
-    public List<Lineitem> getActiveLineitems(String userId) {
+    public List<Lineitem> activeLineitemsForProfile(String userProfileId) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getActiveLineitems'");
     }
