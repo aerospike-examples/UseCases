@@ -10,7 +10,7 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 
-@AerospikeRecord(namespace = "rtb", set = "creatives")
+@AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "creatives")
 @AllArgsConstructor
 public class Creative {
     @AerospikeKey

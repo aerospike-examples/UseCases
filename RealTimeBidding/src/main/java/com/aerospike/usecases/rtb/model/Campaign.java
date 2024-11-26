@@ -11,7 +11,7 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 
-@AerospikeRecord(namespace = "rtb", set = "campaigns")
+@AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "campaigns")
 @AllArgsConstructor
 
 public class Campaign {

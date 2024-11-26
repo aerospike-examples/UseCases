@@ -113,7 +113,7 @@ public class MockDataGenerator {
     public static void main(String[] args) {
         System.out.println("DataPopulator.main()");
         AerospikeClient client = new AerospikeClient(null, "localhost", 3000);
-        ObjectMapperStorageEngine storage = new ObjectMapperStorageEngine(client, "rtb");
+        ObjectMapperStorageEngine storage = new ObjectMapperStorageEngine(client);
         MockDataGenerator populator = new MockDataGenerator(storage);
         TimingMetric timer = new TimingMetric("timer", "");
         long numberOfUsers = 50000;

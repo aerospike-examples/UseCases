@@ -11,7 +11,7 @@ import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AerospikeRecord(namespace = "test", set = "devices")
+@AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "devices")
 @AllArgsConstructor
 @Data
 public class Device {

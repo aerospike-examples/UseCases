@@ -12,7 +12,7 @@ import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AerospikeRecord(namespace = "rtb", set = "profiles")
+@AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "profiles")
 @AllArgsConstructor
 @Data
 public class UserProfile {

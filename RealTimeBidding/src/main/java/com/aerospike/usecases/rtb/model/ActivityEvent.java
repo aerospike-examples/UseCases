@@ -2,12 +2,15 @@ package com.aerospike.usecases.rtb.model;
 
 import java.util.Date;
 
+import com.aerospike.mapper.annotations.AerospikeRecord;
+
 import lombok.NoArgsConstructor;
 
 enum EventType {
     VIEW, CLICK, IMPRESSION, INCART, PURCHASE
 }
 
+@AerospikeRecord
 @NoArgsConstructor
 public class ActivityEvent {
     private String id;

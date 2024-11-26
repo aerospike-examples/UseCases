@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@AerospikeRecord(namespace = "test", set = "segments")
+@AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "segments")
 public class SegmentInstance {
     @AerospikeKey
     private long segmentId;

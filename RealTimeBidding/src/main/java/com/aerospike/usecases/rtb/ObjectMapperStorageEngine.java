@@ -4,35 +4,33 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Record;
 import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.exp.ExpOperation;
 import com.aerospike.client.exp.MapExp;
-import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.mapper.tools.AeroMapper;
-import com.aerospike.mapper.tools.configuration.ClassConfig;
 import com.aerospike.mapper.tools.virtuallist.ReturnType;
 import com.aerospike.mapper.tools.virtuallist.VirtualList;
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
+import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 import com.aerospike.usecases.rtb.model.UserProfile;
-import com.aerospike.usecases.rtb.model.Device;
 
 public class ObjectMapperStorageEngine implements StorageEngine {
     // The mapper to do object to Aerospike bidirectional mapping
     private final AeroMapper mapper;
 
-    public ObjectMapperStorageEngine(IAerospikeClient client, String namespace) {
+    public ObjectMapperStorageEngine(IAerospikeClient client) {
         WritePolicy writePolicy = new WritePolicy();
         writePolicy.sendKey = true;
-        ClassConfig deviceConfig = new ClassConfig.Builder(UserProfile.class).withNamespace(namespace).build();
         this.mapper = new AeroMapper.Builder(client).withWritePolicy(writePolicy).forAll()
-                .withClassConfigurations(deviceConfig).build();
+                .build();
     }
 
     @Override

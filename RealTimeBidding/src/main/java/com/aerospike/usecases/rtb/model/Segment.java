@@ -15,7 +15,7 @@ enum DeviceType {
     MOBILE, DESKTOP, TABLET
 }
 
-@AerospikeRecord(namespace = "rtb", set = "segments")
+@AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "segments")
 @AllArgsConstructor
 @Data
 public class Segment {

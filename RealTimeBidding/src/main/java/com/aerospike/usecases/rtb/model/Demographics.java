@@ -1,10 +1,13 @@
 package com.aerospike.usecases.rtb.model;
 
+import com.aerospike.mapper.annotations.AerospikeRecord;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@AerospikeRecord
 public class Demographics {
     private String ageRange;
     private Gender gender;

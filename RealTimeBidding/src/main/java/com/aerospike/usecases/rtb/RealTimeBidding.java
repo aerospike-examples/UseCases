@@ -58,8 +58,10 @@ public class RealTimeBidding {
     private static StorageEngine getStorageEngine(CommandLine cl, IAerospikeClient client, boolean useCloud) {
         String algorithm = cl.getOptionValue("algorithm", "native");
         String namespace = useCloud ? "aerospike_cloud" : "test";
+        // Use a system property for the Object Mapper version
+        System.setProperty("rtb.namespace", namespace);
         StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper")
-                ? new ObjectMapperStorageEngine(client, namespace)
+                ? new ObjectMapperStorageEngine(client)
                 : new NativeStorageEngine(client, namespace);
         Log.info("Using " + storageEngine);
         return storageEngine;

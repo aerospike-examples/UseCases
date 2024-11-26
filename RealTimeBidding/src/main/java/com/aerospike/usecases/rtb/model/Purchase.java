@@ -2,9 +2,12 @@ package com.aerospike.usecases.rtb.model;
 
 import java.util.Date;
 
+import com.aerospike.mapper.annotations.AerospikeRecord;
+
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AerospikeRecord
 public class Purchase {
     // purchase id
     private String id;

@@ -2,9 +2,12 @@ package com.aerospike.usecases.rtb.model;
 
 import java.util.List;
 
+import com.aerospike.mapper.annotations.AerospikeRecord;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
+@AerospikeRecord
 public class Publisher {
     private String id;
     private String name;
