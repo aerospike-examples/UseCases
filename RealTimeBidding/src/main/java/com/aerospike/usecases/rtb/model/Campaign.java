@@ -124,4 +124,12 @@ public class Campaign {
         this.budget = budget;
     }
 
+    @Override
+    public String toString() {
+        return "Campaign{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", description='" + description + '\''
+                + ", advertiserId='" + advertiserId + '\'' + ", lineitemIds=" + lineitemIds + ", startDate=" + startDate
+                + ", endDate=" + endDate + ", budget=" + budget + ", budgetSpent=" + budgetSpent + ", status=" + status
+                + '}';
+    }
+
 }

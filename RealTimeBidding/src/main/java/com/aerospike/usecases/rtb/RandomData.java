@@ -17,7 +17,10 @@ import com.aerospike.usecases.rtb.model.LineitemStatus;
 import com.aerospike.usecases.rtb.model.Location;
 import com.aerospike.usecases.rtb.model.Size;
 import com.aerospike.usecases.rtb.model.Publisher;
+import com.aerospike.usecases.rtb.model.bid.Bid;
 import com.aerospike.usecases.rtb.model.bid.BidRequest;
+import com.aerospike.usecases.rtb.model.bid.BidResponse;
+import com.aerospike.usecases.rtb.model.bid.SeatBid;
 
 import java.util.UUID;
 
@@ -334,5 +337,21 @@ public class RandomData {
                 zip, latitude, longitude, publisher);
 
         return bidRequest;
+    }
+
+    public static BidResponse randomBidResponse(BidRequest bidRequest, Lineitem lineitem) {
+        Bid bid = new Bid(UUID.randomUUID().toString(), bidRequest.getId(), bidRequest.getAdUnitCode(),
+                bidRequest.getBidFloor(), bidRequest.getCurrency(),
+                randomCreative(UUID.randomUUID().toString(), UUID.randomUUID().toString()).getId(),
+                randomLocation().getCountry(), randomLocation().getRegion(), randomLocation().getCity(),
+                randomLocation().getPostalCode(), randomLocation().getLatitude(), randomLocation().getLongitude());
+        List<Bid> bids = new ArrayList<Bid>();
+        bids.add(bid);
+        SeatBid seatBid = new SeatBid("12345", bids);
+        List<SeatBid> seatBids = new ArrayList<SeatBid>();
+        seatBids.add(seatBid);
+        BidResponse response = new BidResponse(bidRequest.getId(), "USD", seatBids);
+
+        return response;
     }
 }

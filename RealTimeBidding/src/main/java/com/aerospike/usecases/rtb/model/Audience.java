@@ -54,4 +54,9 @@ public class Audience {
     public void setSegmentIds(List<String> segmentIds) {
         this.segmentIds = segmentIds;
     }
+
+    @Override
+    public String toString() {
+        return "Audience{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", segmentIds=" + segmentIds + '}';
+    }
 }

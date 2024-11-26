@@ -29,8 +29,7 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     public ObjectMapperStorageEngine(IAerospikeClient client) {
         WritePolicy writePolicy = new WritePolicy();
         writePolicy.sendKey = true;
-        this.mapper = new AeroMapper.Builder(client).withWritePolicy(writePolicy).forAll()
-                .build();
+        this.mapper = new AeroMapper.Builder(client).withWritePolicy(writePolicy).forAll().build();
     }
 
     @Override
@@ -88,26 +87,35 @@ public class ObjectMapperStorageEngine implements StorageEngine {
 
     @Override
     public void saveDevice(Device device) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveDevice'");
+        mapper.save(device);
     }
 
     @Override
     public void insertSegmentAndRemoveExpired(String deviceId, SegmentInstance segment) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertSegmentAndRemoveExpired'");
+        VirtualList<SegmentInstance> virtualList = mapper.asBackedList(Device.class, deviceId, "segments",
+                SegmentInstance.class);
+        virtualList.beginMultiOperation().append(segment).removeByValueRange(null, new Date().getTime()).end();
+
     }
 
     @Override
     public List<SegmentInstance> getActiveSegments(String deviceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getActiveSegments'");
+        VirtualList<SegmentInstance> virtualList = mapper.asBackedList(Device.class, deviceId, "segments",
+                SegmentInstance.class);
+        return virtualList.getByValueRange(new Date().getTime(), null, ReturnType.ELEMENTS);
     }
 
     @Override
     public Record getCountOfActiveAndExpiredSegments(String deviceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCountOfActiveAndExpiredSegments'");
+        long now = new Date().getTime();
+        Record record = mapper.getClient().operate(mapper.getWritePolicy(Device.class), mapper.getRecordKey(deviceId),
+                ExpOperation.read("expired",
+                        Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.nil(), Exp.val(Arrays.asList(now)),
+                                Exp.mapBin("segments"))),
+                        MapWriteFlags.DEFAULT),
+                ExpOperation.read("active", Exp.build(MapExp.getByValueRange(MapReturnType.COUNT,
+                        Exp.val(Arrays.asList(now)), Exp.inf(), Exp.mapBin("segments"))), MapWriteFlags.DEFAULT));
+        return record;
     }
 
     @Override

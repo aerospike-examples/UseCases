@@ -52,4 +52,11 @@ public class Demographics {
         return matitalStatus;
     }
 
+    @Override
+    public String toString() {
+        return "Demographics{" + "ageRange='" + ageRange + '\'' + ", gender=" + gender + ", incomeLevel='" + incomeLevel
+                + '\'' + ", educationLevel='" + educationLevel + '\'' + ", employmentStatus='" + employmentStatus + '\''
+                + ", matitalStatus='" + matitalStatus + '\'' + '}';
+    }
+
 }

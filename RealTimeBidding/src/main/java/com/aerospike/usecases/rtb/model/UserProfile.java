@@ -87,4 +87,11 @@ public class UserProfile {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    @Override
+    public String toString() {
+        return "UserProfile{" + "id='" + id + '\'' + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
+                + ", demographics=" + demographics + ", interests=" + interests + ", location=" + location
+                + ", activity=" + activity + ", purchases=" + purchases + ", lineitems=" + lineitems + '}';
+    }
 }

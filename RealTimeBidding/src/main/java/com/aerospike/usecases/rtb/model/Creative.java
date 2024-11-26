@@ -73,4 +73,11 @@ public class Creative {
         this.sizes = sizes;
     }
 
+    @Override
+    public String toString() {
+        return "Creative{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", url='" + url + '\'' + ", sizes=" + sizes
+                + ", advertiserId='" + advertiserId + '\'' + ", lineitemId='" + lineitemId + '\'' + ", type='" + type
+                + '\'' + '}';
+    }
+
 }

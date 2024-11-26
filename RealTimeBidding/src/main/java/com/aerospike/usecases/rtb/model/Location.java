@@ -58,4 +58,11 @@ public class Location {
         return longitude;
     }
 
+    @Override
+    public String toString() {
+        return "Location{" + "country='" + country + '\'' + ", isoCode='" + isoCode + '\'' + ", region='" + region
+                + '\'' + ", city='" + city + '\'' + ", postalCode='" + postalCode + '\'' + ", latitude=" + latitude
+                + ", longitude=" + longitude + '}';
+    }
+
 }

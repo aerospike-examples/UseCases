@@ -127,4 +127,14 @@ public class Purchase {
         return activityEventId;
     }
 
+    @Override
+    public String toString() {
+        return "Purchase{" + "id='" + id + '\'' + ", purchaseDate=" + purchaseDate + ", productSku='" + productSku
+                + '\'' + ", description='" + description + '\'' + ", price=" + price + ", currency='" + currency + '\''
+                + ", category='" + category + '\'' + ", subCategory='" + subCategory + '\'' + ", brand='" + brand + '\''
+                + ", model='" + model + '\'' + ", color='" + color + '\'' + ", size='" + size + '\'' + ", condition='"
+                + condition + '\'' + ", vendorUrl='" + vendorUrl + '\'' + ", productUrl='" + productUrl + '\''
+                + ", activityEventId='" + activityEventId + '\'' + '}';
+    }
+
 }

@@ -66,4 +66,10 @@ public class Publisher {
     public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
+
+    @Override
+    public String toString() {
+        return "Publisher{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", domain='" + domain + '\''
+                + ", categories=" + categories + ", domains=" + domains + ", keywords=" + keywords + '}';
+    }
 }

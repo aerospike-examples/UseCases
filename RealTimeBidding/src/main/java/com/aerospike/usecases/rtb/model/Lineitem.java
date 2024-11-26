@@ -103,4 +103,11 @@ public class Lineitem {
         this.audience = audience;
     }
 
+    @Override
+    public String toString() {
+        return "Lineitem{" + "id='" + id + '\'' + ", campaignId='" + campaignId + '\'' + ", name='" + name + '\''
+                + ", startDate=" + startDate + ", endDate=" + endDate + ", budget=" + budget + ", audience=" + audience
+                + ", status=" + status + ", creativeIds=" + creativeIds + '}';
+    }
+
 }

@@ -103,4 +103,11 @@ public class Segment {
         this.interests.add(interest);
     }
 
+    @Override
+    public String toString() {
+        return "Segment{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", description='" + description + '\''
+                + ", size=" + size + ", creationDate=" + creationDate + ", lastUpdated=" + lastUpdated + ", device="
+                + device + ", demographics=" + demographics + ", interests=" + interests + '}';
+    }
+
 }
