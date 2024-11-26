@@ -4,6 +4,8 @@ import java.util.Date;
 
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
+import lombok.AllArgsConstructor;
+
 import lombok.NoArgsConstructor;
 
 enum EventType {
@@ -12,6 +14,7 @@ enum EventType {
 
 @AerospikeRecord
 @NoArgsConstructor
+@AllArgsConstructor
 public class ActivityEvent {
     private String id;
     private String pageUrl;
