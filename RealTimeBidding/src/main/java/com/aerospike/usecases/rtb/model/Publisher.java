@@ -5,8 +5,10 @@ import java.util.List;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @AerospikeRecord
 public class Publisher {
     private String id;

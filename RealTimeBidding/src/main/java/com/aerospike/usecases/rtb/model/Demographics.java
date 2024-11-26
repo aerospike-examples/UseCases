@@ -4,9 +4,11 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @AerospikeRecord
 public class Demographics {
     private String ageRange;

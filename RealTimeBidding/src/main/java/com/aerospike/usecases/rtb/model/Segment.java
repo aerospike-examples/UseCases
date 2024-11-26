@@ -10,6 +10,7 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 enum DeviceType {
     MOBILE, DESKTOP, TABLET
@@ -17,6 +18,7 @@ enum DeviceType {
 
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "segments")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Segment {
     @AerospikeKey

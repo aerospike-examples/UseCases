@@ -28,9 +28,10 @@ public class MocBidder {
     public static void main(String[] args) {
         System.out.println("MocBidder.main()");
         AerospikeClient client = new AerospikeClient(null, "localhost", 3000);
-        // System.setProperty("rtb.namespace", "test");
+         // System.setProperty("rtb.namespace", "test");
         ObjectMapperStorageEngine storage = new ObjectMapperStorageEngine(client);
-        storage.fetchUser("3000");
+        UserProfile profile = storage.fetchUser("3000");
+        System.out.println(profile);
         // MocBidder mocBidder = new MocBidder(storage);
         // int numberOfBidRequests = 1;// 1000;
         // long numberOfUsers = 50000;

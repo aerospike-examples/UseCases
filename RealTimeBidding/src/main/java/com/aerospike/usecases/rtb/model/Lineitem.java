@@ -10,9 +10,11 @@ import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "lineitems")
 @AllArgsConstructor
+@ToString
 public class Lineitem {
     @AerospikeKey
     private String id;
