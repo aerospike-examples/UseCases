@@ -72,9 +72,11 @@ public class MockBidder {
             System.out.println("User Profile id: " + userProfile.getId());
             // find up to 20 active lineitems for this user
             List<Lineitem> activeLineitems = storage.activeLineitemsForProfile(userProfile.getId());
+            // TODO this does not work yet
             System.out.println("Active lineitems: " + activeLineitems.size());
 
             // select best lineitem for this bid request
+            // This is a propritary process but here we simply select a random lineitem
             Lineitem selectedLineitem = activeLineitems
                     .get(ThreadLocalRandom.current().nextInt(activeLineitems.size()));
             System.out.println(
