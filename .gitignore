@@ -4,8 +4,10 @@
 # cluster data
 data/aerospike/*.dat
 
+
 # feature configuration
 config/aerospike/features.conf
+config/vector/features.conf
 
 # Log file
 *.log
