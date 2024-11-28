@@ -3,8 +3,10 @@ package com.aerospike.usecases.rtb;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.aerospike.client.IAerospikeClient;
+import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
@@ -38,10 +40,12 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     }
 
     @Override
-    public List<Lineitem> activeLineitemsForProfile(String userProfileId) {
-        VirtualList<Lineitem> virtualList = mapper.asBackedList(UserProfile.class, userProfileId, "lineitems",
-                Lineitem.class);
-        return virtualList.getByValueRange(new Date().getTime(), null, ReturnType.ELEMENTS);
+    public List<Lineitem> activeLineitems(List<String> ids) {
+        String[] linitemIds = ids.toArray(new String[0]);
+        // TODO how do I add a filter to return only active lineitems
+        // where LineitemStatus status = LineitemStatus.ACTIVE;
+        Lineitem[] lineitems = mapper.read(Lineitem.class, linitemIds);
+        return Arrays.asList(lineitems);
     }
 
     @Override

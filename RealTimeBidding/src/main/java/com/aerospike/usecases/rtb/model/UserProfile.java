@@ -36,14 +36,14 @@ public class UserProfile {
     @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
     private List<Purchase> purchases;
     // eligible lineitem IDs for this user
-    @AerospikeEmbed(type = EmbedType.LIST, elementType = EmbedType.MAP)
-    private List<Lineitem> lineitems;
+    @AerospikeEmbed(type = EmbedType.LIST)
+    private List<String> lineitems;
 
     public UserProfile() {
         this.interests = new ArrayList<String>();
         this.activity = new ArrayList<ActivityEvent>();
         this.purchases = new ArrayList<Purchase>();
-        this.lineitems = new ArrayList<Lineitem>();
+        this.lineitems = new ArrayList<String>();
     }
 
     public UserProfile(String id, Demographics demographics, Location location) {
@@ -57,10 +57,10 @@ public class UserProfile {
     }
 
     public void addLineitem(Lineitem lineitem) {
-        this.lineitems.add(lineitem);
+        this.lineitems.add(lineitem.getId());
     }
 
-    public void setLineitems(List<Lineitem> lineitems) {
+    public void setLineitems(List<String> lineitems) {
         this.lineitems = lineitems;
     }
 

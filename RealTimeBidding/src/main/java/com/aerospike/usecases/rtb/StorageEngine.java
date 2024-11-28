@@ -65,12 +65,12 @@ public interface StorageEngine {
     UserProfile fetchUser(String userId);
 
     /**
-     * Get a list of active lineitems associated with the passed userId
+     * Get a list of active lineitems
      * 
-     * @param userProfileId
+     * @param List<String> ids Linitem ids
      * @return
      */
-    List<Lineitem> activeLineitemsForProfile(String userProfileId);
+    public List<Lineitem> activeLineitems(List<String> ids);
 
     /**
      * Return counts of the active lineitems and the inactive lineitems associated

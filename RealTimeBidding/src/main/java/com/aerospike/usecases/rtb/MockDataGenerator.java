@@ -56,7 +56,6 @@ public class MockDataGenerator {
                 this.storageEngine.saveCreatives(creatives);
 
                 // // map the lineitems to 50 random users
-                System.out.println("Mapping lineitems to users");
                 for (int i = 0; i < 50; i++) {
                     try {
                         String randomUserId = String
@@ -67,6 +66,7 @@ public class MockDataGenerator {
                             continue;
                         }
                         // assign a random number of lineitems to this user
+                        // stored as lineitem IDs
                         int numberOfLineitemsToAssign = ThreadLocalRandom.current().nextInt(2, 6);
                         for (int j = 0; j < numberOfLineitemsToAssign; j++) {
                             Lineitem lineitem = lineitems.get(ThreadLocalRandom.current().nextInt(lineitems.size()));
@@ -79,7 +79,6 @@ public class MockDataGenerator {
 
                     }
                 }
-                System.out.println("Mapped lineitems to users");
 
                 timer.addTime(System.nanoTime() - startTime);
 
