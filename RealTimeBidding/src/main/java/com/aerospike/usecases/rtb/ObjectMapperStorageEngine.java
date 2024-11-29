@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.sound.sampled.Line;
+
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
@@ -12,6 +14,7 @@ import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.exp.ExpOperation;
+import com.aerospike.client.exp.Expression;
 import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.mapper.tools.AeroMapper;
@@ -21,6 +24,7 @@ import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
 import com.aerospike.usecases.rtb.model.Device;
 import com.aerospike.usecases.rtb.model.Lineitem;
+import com.aerospike.usecases.rtb.model.LineitemStatus;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
 import com.aerospike.usecases.rtb.model.UserProfile;
 
@@ -41,30 +45,16 @@ public class ObjectMapperStorageEngine implements StorageEngine {
 
     @Override
     public List<Lineitem> activeLineitems(List<String> ids) {
-        String[] linitemIds = ids.toArray(new String[0]);
-        // TODO how do I add a filter to return only active lineitems
-        // where LineitemStatus status = LineitemStatus.ACTIVE;
-        Lineitem[] lineitems = mapper.read(Lineitem.class, linitemIds);
+        String[] lineitemIds = ids.toArray(new String[0]);
+        Expression exp = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
+        // TODO how do I add a filter to return only active lineitems?
+        Lineitem[] lineitems = mapper.read(Lineitem.class, lineitemIds);
         return Arrays.asList(lineitems);
     }
 
     @Override
     public String toString() {
         return "ObjectMapperStorageEngine";
-    }
-
-    @Override
-    public Record getCountLineitems(String userId) {
-        long now = new Date().getTime();
-        Record record = mapper.getClient().operate(mapper.getWritePolicy(UserProfile.class),
-                mapper.getRecordKey(userId),
-                ExpOperation.read("expired",
-                        Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.nil(), Exp.val(Arrays.asList(now)),
-                                Exp.mapBin("segments"))),
-                        MapWriteFlags.DEFAULT),
-                ExpOperation.read("active", Exp.build(MapExp.getByValueRange(MapReturnType.COUNT,
-                        Exp.val(Arrays.asList(now)), Exp.inf(), Exp.mapBin("segments"))), MapWriteFlags.DEFAULT));
-        return record;
     }
 
     @Override

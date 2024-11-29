@@ -181,15 +181,9 @@ public class NativeStorageEngine implements StorageEngine {
     }
 
     @Override
-    public List<Lineitem> activeLineitemsForProfile(String userProfileId) {
+    public List<Lineitem> activeLineitems(List<String> ids) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getActiveLineitems'");
-    }
-
-    @Override
-    public Record getCountLineitems(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCountLineitems'");
     }
 
     @Override

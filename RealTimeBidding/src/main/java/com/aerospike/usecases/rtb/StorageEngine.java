@@ -3,7 +3,6 @@ package com.aerospike.usecases.rtb;
 import java.util.List;
 
 import com.aerospike.client.Record;
-import com.aerospike.client.admin.User;
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
 import com.aerospike.usecases.rtb.model.Device;
@@ -72,12 +71,4 @@ public interface StorageEngine {
      */
     public List<Lineitem> activeLineitems(List<String> ids);
 
-    /**
-     * Return counts of the active lineitems and the inactive lineitems associated
-     * with a user id.
-     * 
-     * @param userId
-     * @return
-     */
-    Record getCountLineitems(String userId);
 }
