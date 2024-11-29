@@ -16,6 +16,7 @@ import com.aerospike.client.exp.Exp;
 import com.aerospike.client.exp.ExpOperation;
 import com.aerospike.client.exp.Expression;
 import com.aerospike.client.exp.MapExp;
+import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.mapper.tools.AeroMapper;
 import com.aerospike.mapper.tools.virtuallist.ReturnType;
@@ -46,7 +47,8 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     @Override
     public List<Lineitem> activeLineitems(List<String> ids) {
         String[] lineitemIds = ids.toArray(new String[0]);
-        Expression exp = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
+        BatchPolicy batchPolicy = new BatchPolicy();
+        batchPolicy.filterExp = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
         // TODO how do I add a filter to return only active lineitems?
         Lineitem[] lineitems = mapper.read(Lineitem.class, lineitemIds);
         return Arrays.asList(lineitems);
