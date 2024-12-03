@@ -1,3 +1,4 @@
+
 package com.aerospike.usecases.rtb.model;
 
 import java.util.Date;
@@ -10,11 +11,18 @@ import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
-import lombok.ToString;
 
+/**
+ * Represents a Lineitem which is a portion of a Campaign and represents an
+ * execution plan. This class is annotated to be stored in an Aerospike
+ * database.
+ * 
+ * @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "lineitems")
+ * 
+ * @author Peter Milne
+ */
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "lineitems")
 @AllArgsConstructor
-@ToString
 public class Lineitem {
     @AerospikeKey
     private String id;

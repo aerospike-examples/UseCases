@@ -6,6 +6,9 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a purchase made by a user and is part of a UserProfile
+ */
 @NoArgsConstructor
 @AerospikeRecord
 public class Purchase {

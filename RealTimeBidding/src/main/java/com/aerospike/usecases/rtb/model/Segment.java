@@ -16,6 +16,65 @@ enum DeviceType {
     MOBILE, DESKTOP, TABLET
 }
 
+/**
+ * Represents a segment in an Audience of the real-time bidding system.
+ * 
+ * <p>
+ * This class is annotated with AerospikeRecord to map it to an Aerospike
+ * database record. It contains various fields such as id, name, description,
+ * size, creationDate, lastUpdated, device, demographics, and interests. The
+ * class provides constructors, getters, setters, and utility methods to manage
+ * the segment data.
+ * </p>
+ * 
+ * <p>
+ * Fields:
+ * </p>
+ * <ul>
+ * <li>{@code id} - The unique identifier for the segment.</li>
+ * <li>{@code name} - The name of the segment.</li>
+ * <li>{@code description} - A brief description of the segment.</li>
+ * <li>{@code size} - The size of the segment.</li>
+ * <li>{@code creationDate} - The date when the segment was created.</li>
+ * <li>{@code lastUpdated} - The date when the segment was last updated.</li>
+ * <li>{@code device} - The device type associated with the segment, embedded as
+ * a map.</li>
+ * <li>{@code demographics} - The demographics associated with the segment,
+ * embedded as a map.</li>
+ * <li>{@code interests} - A list of interests associated with the segment,
+ * embedded as a list.</li>
+ * </ul>
+ * 
+ * <p>
+ * Methods:
+ * </p>
+ * <ul>
+ * <li>{@code Segment(String id, String name, String description, int size, DeviceType device, Demographics demographics)}
+ * - Constructor to initialize a segment with specified values.</li>
+ * <li>{@code setDescription(String description)} - Sets the description of the
+ * segment.</li>
+ * <li>{@code setName(String name)} - Sets the name of the segment.</li>
+ * <li>{@code setSize(int size)} - Sets the size of the segment.</li>
+ * <li>{@code touch()} - Updates the lastUpdated field to the current date.</li>
+ * <li>{@code getInterests()} - Returns the list of interests associated with
+ * the segment.</li>
+ * <li>{@code getDemographics()} - Returns the demographics associated with the
+ * segment.</li>
+ * <li>{@code getDevice()} - Returns the device type associated with the
+ * segment.</li>
+ * <li>{@code getDescription()} - Returns the description of the segment.</li>
+ * <li>{@code getName()} - Returns the name of the segment.</li>
+ * <li>{@code getSize()} - Returns the size of the segment.</li>
+ * <li>{@code getLastUpdated()} - Returns the date when the segment was last
+ * updated.</li>
+ * <li>{@code getCreationDate()} - Returns the date when the segment was
+ * created.</li>
+ * <li>{@code getId()} - Returns the unique identifier of the segment.</li>
+ * <li>{@code addInterest(String interest)} - Adds an interest to the list of
+ * interests associated with the segment.</li>
+ * <li>{@code toString()} - Returns a string representation of the segment.</li>
+ * </ul>
+ */
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "segments")
 @AllArgsConstructor
 @NoArgsConstructor

@@ -11,6 +11,69 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Represents a Buy Side Campaign in the Real-Time Bidding system.
+ * 
+ * <p>
+ * This class is annotated with AerospikeRecord to map it to the Aerospike
+ * database. It contains various fields related to a campaign such as id, name,
+ * description, advertiserId, lineitemIds, startDate, endDate, budget,
+ * budgetSpent, and status.
+ * </p>
+ * 
+ * <p>
+ * It provides constructors for creating a Campaign instance, getter methods to
+ * access the fields, and setter methods to modify the fields. Additionally, it
+ * includes methods to add line items and a toString method for representing the
+ * Campaign object as a string.
+ * </p>
+ * 
+ * <p>
+ * Fields:
+ * </p>
+ * <ul>
+ * <li>{@code id} - The unique identifier for the campaign.</li>
+ * <li>{@code name} - The name of the campaign.</li>
+ * <li>{@code description} - A brief description of the campaign.</li>
+ * <li>{@code advertiserId} - The identifier of the advertiser associated with
+ * the campaign.</li>
+ * <li>{@code lineitemIds} - A list of line item identifiers associated with the
+ * campaign.</li>
+ * <li>{@code startDate} - The start date of the campaign.</li>
+ * <li>{@code endDate} - The end date of the campaign.</li>
+ * <li>{@code budget} - The total budget allocated for the campaign.</li>
+ * <li>{@code budgetSpent} - The amount of budget spent so far.</li>
+ * <li>{@code status} - The current status of the campaign.</li>
+ * </ul>
+ * 
+ * <p>
+ * Methods:
+ * </p>
+ * <ul>
+ * <li>{@code getId()} - Returns the campaign id.</li>
+ * <li>{@code getName()} - Returns the campaign name.</li>
+ * <li>{@code getDescription()} - Returns the campaign description.</li>
+ * <li>{@code getAdvertiserId()} - Returns the advertiser id.</li>
+ * <li>{@code getLineitemIds()} - Returns the list of line item ids.</li>
+ * <li>{@code getStartDate()} - Returns the start date of the campaign.</li>
+ * <li>{@code getEndDate()} - Returns the end date of the campaign.</li>
+ * <li>{@code getBudget()} - Returns the campaign budget.</li>
+ * <li>{@code getBudgetSpent()} - Returns the amount of budget spent.</li>
+ * <li>{@code getStatus()} - Returns the campaign status.</li>
+ * <li>{@code addLineitem(Lineitem lineitem)} - Adds a line item to the
+ * campaign.</li>
+ * <li>{@code addLineitem(String id)} - Adds a line item id to the
+ * campaign.</li>
+ * <li>{@code setStatus(CampaignStatus status)} - Sets the campaign status.</li>
+ * <li>{@code setEndDate(Date endDate)} - Sets the end date of the
+ * campaign.</li>
+ * <li>{@code setBudgetSpent(int budgetSpent)} - Sets the amount of budget
+ * spent.</li>
+ * <li>{@code setDescription(String description)} - Sets the campaign
+ * description.</li>
+ * <li>{@code setLineitems(List<Lineitem> lineitems)} - Sets the list of line
+ * items.</li>
+ */
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "campaigns")
 @AllArgsConstructor
 

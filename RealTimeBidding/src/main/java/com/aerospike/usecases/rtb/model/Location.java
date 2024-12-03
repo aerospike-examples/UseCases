@@ -5,6 +5,52 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a geographic location with details such as country, ISO code,
+ * region, city, postal code, latitude, and longitude.
+ * <p>
+ * This class is used to store and retrieve information about a specific
+ * location.
+ * </p>
+ * 
+ * <p>
+ * Example usage:
+ * </p>
+ * 
+ * <pre>
+ * {@code
+ * Location location = new Location("USA", "US", "California", "San Francisco", "94103", 37.7749, -122.4194);
+ * System.out.println(location.getCity()); // Outputs: San Francisco
+ * }
+ * </pre>
+ * 
+ * <p>
+ * The fields in this class are:
+ * </p>
+ * <ul>
+ * <li>{@code country} - The name of the country.</li>
+ * <li>{@code isoCode} - The ISO 3166-1 alpha-2 code of the country.</li>
+ * <li>{@code region} - The state, province, or region.</li>
+ * <li>{@code city} - The name of the city.</li>
+ * <li>{@code postalCode} - The postal code or zip code.</li>
+ * <li>{@code latitude} - The latitude coordinate.</li>
+ * <li>{@code longitude} - The longitude coordinate.</li>
+ * </ul>
+ * 
+ * <p>
+ * This class also provides a {@code toString} method for a string
+ * representation of the location.
+ * </p>
+ * 
+ * <p>
+ * Annotations used:
+ * </p>
+ * <ul>
+ * <li>{@code @NoArgsConstructor} - Generates a no-argument constructor.</li>
+ * <li>{@code @AerospikeRecord} - Indicates that this class is an Aerospike
+ * record.</li>
+ * </ul>
+ */
 @NoArgsConstructor
 @AerospikeRecord
 public class Location {

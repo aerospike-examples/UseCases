@@ -10,6 +10,33 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Represents an audience which is a collection of segments to target in a
+ * Lineitem.
+ * 
+ * <p>
+ * This class is annotated with AerospikeRecord to specify the namespace and set
+ * for Aerospike database. It contains an id, name, and a list of segment ids
+ * that make up the audience.
+ * </p>
+ * 
+ * <p>
+ * It provides methods to get the id, name, and segment ids, as well as methods
+ * to add segments and set the segment ids.
+ * </p>
+ * 
+ * <p>
+ * Constructors are provided to initialize the audience with or without initial
+ * values.
+ * </p>
+ * 
+ * <p>
+ * The toString method is overridden to provide a string representation of the
+ * audience object.
+ * </p>
+ * 
+ * @see Segment
+ */
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "audiences")
 @AllArgsConstructor
 public class Audience {

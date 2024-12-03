@@ -10,6 +10,62 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Represents a creative entity in the real-time bidding system. A creative can
+ * be a banner ad, video, or other types of electronic advertisements.
+ * 
+ * <p>
+ * This class is annotated with AerospikeRecord to map it to an Aerospike
+ * database. It contains various attributes related to the creative such as id,
+ * name, url, sizes, advertiserId, lineitemId, and type.
+ * </p>
+ * 
+ * <p>
+ * Attributes:
+ * </p>
+ * <ul>
+ * <li>{@code id} - The unique identifier for the creative.</li>
+ * <li>{@code name} - The name of the creative.</li>
+ * <li>{@code url} - The URL associated with the creative.</li>
+ * <li>{@code sizes} - A list of sizes for the creative, embedded as a list of
+ * maps.</li>
+ * <li>{@code advertiserId} - The identifier for the advertiser associated with
+ * the creative.</li>
+ * <li>{@code lineitemId} - The identifier for the line item associated with the
+ * creative.</li>
+ * <li>{@code type} - The type of the creative (e.g., banner, video).</li>
+ * </ul>
+ * 
+ * <p>
+ * Methods:
+ * </p>
+ * <ul>
+ * <li>{@code getId()} - Returns the id of the creative.</li>
+ * <li>{@code getName()} - Returns the name of the creative.</li>
+ * <li>{@code getUrl()} - Returns the URL of the creative.</li>
+ * <li>{@code getSizes()} - Returns the list of sizes for the creative.</li>
+ * <li>{@code getAdvertiserId()} - Returns the advertiser id of the
+ * creative.</li>
+ * <li>{@code getLineitemId()} - Returns the line item id of the creative.</li>
+ * <li>{@code getType()} - Returns the type of the creative.</li>
+ * <li>{@code addSize(Size size)} - Adds a size to the list of sizes for the
+ * creative.</li>
+ * <li>{@code setSizes(List<Size> sizes)} - Sets the list of sizes for the
+ * creative.</li>
+ * <li>{@code toString()} - Returns a string representation of the
+ * creative.</li>
+ * </ul>
+ * 
+ * <p>
+ * Constructors:
+ * </p>
+ * <ul>
+ * <li>{@code Creative()} - Default constructor initializing the sizes
+ * list.</li>
+ * <li>{@code Creative(String id, String name, String url, String advertiserId, String lineitemId, String type)}
+ * - Constructor initializing all attributes and the sizes list.</li>
+ * </ul>
+ */
 @AerospikeRecord(namespace = "${rtb.namespace:rtb}", set = "creatives")
 @AllArgsConstructor
 public class Creative {

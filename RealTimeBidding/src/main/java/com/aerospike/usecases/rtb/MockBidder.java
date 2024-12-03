@@ -9,6 +9,13 @@ import com.aerospike.usecases.rtb.model.UserProfile;
 import com.aerospike.usecases.rtb.model.bid.BidRequest;
 import com.aerospike.usecases.rtb.model.bid.BidResponse;
 
+/**
+ * The MockBidder class simulates the behavior of a Real-Time Bidding (RTB)
+ * bidder. It matches bid requests to user profiles and selects the best line
+ * item for each bid request. The class uses a storage engine to fetch user
+ * profiles and active line items. and return a bid response.
+ * 
+ */
 public class MockBidder {
 
     StorageEngine storageEngine;

@@ -7,6 +7,36 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a Publisher in the Real-Time Bidding system. A Publisher can be a
+ * web or app publisher.
+ * 
+ * <p>
+ * This class is annotated with {@code @AllArgsConstructor} and
+ * {@code @NoArgsConstructor} to generate constructors with and without
+ * parameters. It is also annotated with {@code @AerospikeRecord} to indicate
+ * that it is an Aerospike record.
+ * </p>
+ * 
+ * <p>
+ * Attributes:
+ * </p>
+ * <ul>
+ * <li>{@code id} - Unique identifier for the publisher.</li>
+ * <li>{@code name} - Name of the publisher.</li>
+ * <li>{@code domain} - Domain of the publisher.</li>
+ * <li>{@code categories} - List of categories associated with the
+ * publisher.</li>
+ * <li>{@code domains} - List of domains associated with the publisher.</li>
+ * <li>{@code keywords} - List of keywords associated with the publisher.</li>
+ * </ul>
+ * 
+ * <p>
+ * Includes getter and setter methods for all attributes, and overrides the
+ * {@code toString} method to provide a string representation of the Publisher
+ * object.
+ * </p>
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @AerospikeRecord

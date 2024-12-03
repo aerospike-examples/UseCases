@@ -6,9 +6,41 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Represents the demographics of a user in the real-time bidding system. This
+ * class includes various attributes such as age range, gender, income level,
+ * education level, employment status, and marital status.
+ * 
+ * <p>
+ * This class is annotated with {@link AerospikeRecord} to indicate that it is
+ * an Aerospike record. It also uses Lombok annotations for generating
+ * boilerplate code such as constructors and toString method.
+ * </p>
+ * 
+ * <p>
+ * Attributes:
+ * <ul>
+ * <li>{@code ageRange} - The age range of the user.</li>
+ * <li>{@code gender} - The gender of the user, represented by the
+ * {@link Gender} enum.</li>
+ * <li>{@code incomeLevel} - The income level of the user.</li>
+ * <li>{@code educationLevel} - The education level of the user.</li>
+ * <li>{@code employmentStatus} - The employment status of the user.</li>
+ * <li>{@code matitalStatus} - The marital status of the user.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * This class provides getter methods for each attribute to allow access to the
+ * values.
+ * </p>
+ * 
+ * @see Gender
+ * @see AerospikeRecord
+ */
+
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @AerospikeRecord
 public class Demographics {
     private String ageRange;
