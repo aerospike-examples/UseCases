@@ -9,6 +9,7 @@ import javax.sound.sampled.Line;
 
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
+import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
 import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
@@ -47,11 +48,12 @@ public class ObjectMapperStorageEngine implements StorageEngine {
     @Override
     public List<Lineitem> activeLineitems(List<String> ids) {
         String[] lineitemIds = ids.toArray(new String[0]);
+        Expression filter = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
         BatchPolicy batchPolicy = new BatchPolicy();
-        batchPolicy.filterExp = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
-        // TODO how do I add a filter to return only active lineitems?
-        Lineitem[] lineitems = mapper.read(Lineitem.class, lineitemIds);
-        return Arrays.asList(lineitems);
+        batchPolicy.filterExp = filter;
+        Lineitem[] lineitems = mapper.read(batchPolicy, Lineitem.class, lineitemIds);
+        return Arrays.stream(lineitems).filter(lineitem -> lineitem != null).collect(Collectors.toList());
+
     }
 
     @Override
