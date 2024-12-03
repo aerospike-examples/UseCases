@@ -40,18 +40,36 @@ public class ObjectMapperStorageEngine implements StorageEngine {
         this.mapper = new AeroMapper.Builder(client).withWritePolicy(writePolicy).forAll().build();
     }
 
+    /**
+     * Saves the given user profile to the storage engine.
+     *
+     * @param user the user profile to be saved
+     */
     @Override
     public void saveUser(UserProfile user) {
         mapper.save(user);
     }
 
+    /**
+     * Retrieves a list of active Lineitem objects based on the provided list of
+     * IDs.
+     *
+     * @param ids A list of String IDs representing the Lineitems to be retrieved.
+     * @return A list of active Lineitem objects corresponding to the provided IDs.
+     */
     @Override
     public List<Lineitem> activeLineitems(List<String> ids) {
+        // Convert the list of String IDs to an array of Strings
         String[] lineitemIds = ids.toArray(new String[0]);
+        // Build an expression filter to match Lineitems with a status of "ACTIVE"
         Expression filter = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
+        // Create a BatchPolicy and set the filter expression on it
         BatchPolicy batchPolicy = new BatchPolicy();
         batchPolicy.filterExp = filter;
+        // Uses the ObjectMapper to read the Lineitems from the database based on the
+        // filter
         Lineitem[] lineitems = mapper.read(batchPolicy, Lineitem.class, lineitemIds);
+        // Filter out any null Lineitems and return the list
         return Arrays.stream(lineitems).filter(lineitem -> lineitem != null).collect(Collectors.toList());
 
     }
@@ -61,11 +79,21 @@ public class ObjectMapperStorageEngine implements StorageEngine {
         return "ObjectMapperStorageEngine";
     }
 
+    /**
+     * Saves the given Lineitem object using the ObjectMapper.
+     *
+     * @param lineitem the Lineitem object to be saved
+     */
     @Override
     public void saveLineitem(Lineitem lineitem) {
         mapper.save(lineitem);
     }
 
+    /**
+     * Saves a list of Lineitem objects using the mapper.
+     *
+     * @param lineitems the list of Lineitem objects to be saved
+     */
     @Override
     public void saveLineitems(List<Lineitem> lineitems) {
         for (Lineitem lineitem : lineitems) {
@@ -73,11 +101,22 @@ public class ObjectMapperStorageEngine implements StorageEngine {
         }
     }
 
+    /**
+     * Saves the given campaign using the ObjectMapper.
+     *
+     * @param campaign the campaign object to be saved
+     */
     @Override
     public void saveCampaign(Campaign campaign) {
         mapper.save(campaign);
     }
 
+    /**
+     * Fetches the user profile for the given user ID.
+     *
+     * @param userId the ID of the user whose profile is to be fetched
+     * @return the UserProfile object corresponding to the given user ID
+     */
     @Override
     public UserProfile fetchUser(String userId) {
         return mapper.read(UserProfile.class, userId);

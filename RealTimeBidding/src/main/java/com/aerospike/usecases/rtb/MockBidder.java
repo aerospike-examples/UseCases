@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;
-import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.UserProfile;
 import com.aerospike.usecases.rtb.model.bid.BidRequest;
@@ -28,60 +27,56 @@ public class MockBidder {
 
     }
 
-    public BidResponse processBidRequest(BidRequest bidRequest) {
-        // match bid request to a user profile
-        UserProfile userProfile = matchBidResuestToUserProfile(bidRequest);
-        if (userProfile == null) {
-            System.out.println("No user profile found therefore no bid");
-            return null;
-        }
-        System.out.println("User Profile id: " + userProfile.getId());
-        // find up to 20 active lineitems for this user
-        List<Lineitem> activeLineitems = storageEngine.activeLineitems(userProfile.getLineitems());
-        System.out.println("Active lineitems: " + activeLineitems.size());
-
-        // select a random lineitem as the best lineitem for this bid request
-        Lineitem selectedLineitem = activeLineitems.get(ThreadLocalRandom.current().nextInt(activeLineitems.size()));
-        System.out.println("Selected lineitem: " + selectedLineitem.getId());
-
-        // create a bid response
-        BidResponse bidResponse = RandomData.randomBidResponse(bidRequest, selectedLineitem);
-
-        return bidResponse;
-
-    }
-
+    /**
+     * The main method to simulate the bidding process.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         System.out.println("MocBidder.main()");
+
+        // Initialize Aerospike client
         AerospikeClient client = new AerospikeClient(null, "localhost", 3000);
-        // System.setProperty("rtb.namespace", "test");
+
+        // Initialize storage engine with the Aerospike client
         ObjectMapperStorageEngine storage = new ObjectMapperStorageEngine(client);
+
+        // Create an instance of MockBidder
         MockBidder mockBidder = new MockBidder(storage);
+
+        // Define the number of bid requests to simulate
         int numberOfBidRequests = 1000;
+
+        // Define the number of users and starting user ID
         long numberOfUsers = 50000;
         long startUser = 1000;
+
+        // Loop through the number of bid requests
         for (int i = 0; i < numberOfBidRequests; i++) {
-            // create a mock bid request
+            // Create a mock bid request
             BidRequest bidRequest = RandomData.randomBidRequest(startUser, numberOfUsers + startUser);
-            // match bid request to a user profile
+
+            // Match bid request to a user profile
             UserProfile userProfile = mockBidder.matchBidResuestToUserProfile(bidRequest);
+
+            // If no user profile is found, print a message and continue to the next request
             if (userProfile == null) {
                 System.out.println("No user profile found therefore no bid");
                 continue;
             }
-            System.out.println("User Profile id: " + userProfile.getId());
-            // find up to 20 active lineitems for this user
+
+            // Find up to 20 active line items for this user
             List<Lineitem> activeLineitems = storage.activeLineitems(userProfile.getLineitems());
-            // select best lineitem for this bid request
-            // This is a propritary process but here we simply select a random lineitem
+
+            // Select the best line item for this bid request (randomly selected here)
             Lineitem selectedLineitem = activeLineitems
                     .get(ThreadLocalRandom.current().nextInt(activeLineitems.size()));
 
-            // create a bid response
+            // Create a bid response
             BidResponse bidResponse = RandomData.randomBidResponse(bidRequest, selectedLineitem);
+
+            // Print the bid response ID
             System.out.println("Bid response: " + bidResponse.getId());
-
         }
-
     }
 }
