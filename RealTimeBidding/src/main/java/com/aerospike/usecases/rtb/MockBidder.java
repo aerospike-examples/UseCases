@@ -34,6 +34,24 @@ public class MockBidder {
 
     }
 
+    public BidResponse processBidRequest(BidRequest bidRequest) {
+        // Match bid request to a user profile
+        UserProfile userProfile = matchBidResuestToUserProfile(bidRequest);
+        if (userProfile == null) {
+            System.out.println("No user profile found therefore no bid");
+            return null;
+        }
+        // Find up to 20 active line items for this user
+        List<Lineitem> activeLineitems = this.storageEngine.activeLineitems(userProfile.getLineitems());
+        // Select the best line item for this bid request (randomly selected in this
+        // example)
+        Lineitem selectedLineitem = activeLineitems.get(ThreadLocalRandom.current().nextInt(activeLineitems.size()));
+        // Create a bid response
+        BidResponse bidResponse = RandomData.randomBidResponse(bidRequest, selectedLineitem);
+
+        return bidResponse;
+    }
+
     /**
      * The main method to simulate the bidding process.
      *
@@ -63,27 +81,10 @@ public class MockBidder {
             // Create a mock bid request
             BidRequest bidRequest = RandomData.randomBidRequest(startUser, numberOfUsers + startUser);
 
-            // Match bid request to a user profile
-            UserProfile userProfile = mockBidder.matchBidResuestToUserProfile(bidRequest);
+            BidResponse bidResponse = mockBidder.processBidRequest(bidRequest);
 
-            // If no user profile is found, print a message and continue to the next request
-            if (userProfile == null) {
-                System.out.println("No user profile found therefore no bid");
-                continue;
-            }
-
-            // Find up to 20 active line items for this user
-            List<Lineitem> activeLineitems = storage.activeLineitems(userProfile.getLineitems());
-
-            // Select the best line item for this bid request (randomly selected here)
-            Lineitem selectedLineitem = activeLineitems
-                    .get(ThreadLocalRandom.current().nextInt(activeLineitems.size()));
-
-            // Create a bid response
-            BidResponse bidResponse = RandomData.randomBidResponse(bidRequest, selectedLineitem);
-
-            // Print the bid response ID
-            System.out.println("Bid response: " + bidResponse.getId());
+            // Print the bid request and response IDs
+            System.out.println("Bid request: " + bidRequest.getId() + " Bid response: " + bidResponse.getId());
         }
     }
 }
