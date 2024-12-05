@@ -96,4 +96,13 @@ public class Audience {
         audience.segmentIds = (List<String>) map.get("segmentIds");
         return audience;
     }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("segmentIds", segmentIds);
+        return map;
+    }
 }

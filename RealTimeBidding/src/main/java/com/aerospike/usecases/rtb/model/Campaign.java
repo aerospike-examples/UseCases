@@ -10,6 +10,8 @@ import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a Buy Side Campaign in the Real-Time Bidding system.
@@ -193,6 +195,39 @@ public class Campaign {
                 + ", advertiserId='" + advertiserId + '\'' + ", lineitemIds=" + lineitemIds + ", startDate=" + startDate
                 + ", endDate=" + endDate + ", budget=" + budget + ", budgetSpent=" + budgetSpent + ", status=" + status
                 + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("description", description);
+        map.put("advertiserId", advertiserId);
+        map.put("lineitemIds", lineitemIds);
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+        map.put("budget", budget);
+        map.put("budgetSpent", budgetSpent);
+        map.put("status", status);
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Campaign fromMap(Map<?, ?> map) {
+        // for native storage manager
+        Campaign campaign = new Campaign();
+        campaign.id = (String) map.get("id");
+        campaign.name = (String) map.get("name");
+        campaign.description = (String) map.get("description");
+        campaign.advertiserId = (String) map.get("advertiserId");
+        campaign.lineitemIds = (List<String>) map.get("lineitemIds");
+        campaign.startDate = (Date) map.get("startDate");
+        campaign.endDate = (Date) map.get("endDate");
+        campaign.budget = (int) map.get("budget");
+        campaign.budgetSpent = (int) map.get("budgetSpent");
+        campaign.status = (CampaignStatus) map.get("status");
+        return campaign;
     }
 
 }

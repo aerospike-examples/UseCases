@@ -11,6 +11,8 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 enum DeviceType {
     MOBILE, DESKTOP, TABLET
@@ -167,6 +169,37 @@ public class Segment {
         return "Segment{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", description='" + description + '\''
                 + ", size=" + size + ", creationDate=" + creationDate + ", lastUpdated=" + lastUpdated + ", device="
                 + device + ", demographics=" + demographics + ", interests=" + interests + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("description", description);
+        map.put("size", size);
+        map.put("creationDate", creationDate);
+        map.put("lastUpdated", lastUpdated);
+        map.put("device", device);
+        map.put("demographics", demographics);
+        map.put("interests", interests);
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Segment fromMap(Map<String, Object> map) {
+        // for native storage manager
+        Segment segment = new Segment();
+        segment.id = (String) map.get("id");
+        segment.name = (String) map.get("name");
+        segment.description = (String) map.get("description");
+        segment.size = (int) map.get("size");
+        segment.creationDate = (Date) map.get("creationDate");
+        segment.lastUpdated = (Date) map.get("lastUpdated");
+        segment.device = (DeviceType) map.get("device");
+        segment.demographics = (Demographics) map.get("demographics");
+        segment.interests = (List<String>) map.get("interests");
+        return segment;
     }
 
 }

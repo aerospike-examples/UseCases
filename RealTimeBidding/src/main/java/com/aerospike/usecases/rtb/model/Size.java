@@ -51,4 +51,8 @@ public class Size {
         map.put("height", height);
         return map;
     }
+
+    public static Size fromMap(Map<String, Object> map) {
+        return new Size((int) map.get("width"), (int) map.get("height"));
+    }
 }

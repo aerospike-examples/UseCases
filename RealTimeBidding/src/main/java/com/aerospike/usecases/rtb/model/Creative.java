@@ -9,6 +9,8 @@ import com.aerospike.mapper.annotations.AerospikeKey;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a creative entity in the real-time bidding system. A creative can
@@ -134,6 +136,33 @@ public class Creative {
         return "Creative{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", url='" + url + '\'' + ", sizes=" + sizes
                 + ", advertiserId='" + advertiserId + '\'' + ", lineitemId='" + lineitemId + '\'' + ", type='" + type
                 + '\'' + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("url", url);
+        map.put("sizes", sizes);
+        map.put("advertiserId", advertiserId);
+        map.put("lineitemId", lineitemId);
+        map.put("type", type);
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Creative fromMap(Map<String, Object> map) {
+        // for native storage manager
+        Creative creative = new Creative();
+        creative.id = (String) map.get("id");
+        creative.name = (String) map.get("name");
+        creative.url = (String) map.get("url");
+        creative.sizes = (List<Size>) map.get("sizes");
+        creative.advertiserId = (String) map.get("advertiserId");
+        creative.lineitemId = (String) map.get("lineitemId");
+        creative.type = (String) map.get("type");
+        return creative;
     }
 
 }

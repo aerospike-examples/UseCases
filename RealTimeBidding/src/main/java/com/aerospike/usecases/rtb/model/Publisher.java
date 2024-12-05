@@ -6,6 +6,8 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a Publisher in the Real-Time Bidding system. A Publisher can be a
@@ -101,5 +103,30 @@ public class Publisher {
     public String toString() {
         return "Publisher{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", domain='" + domain + '\''
                 + ", categories=" + categories + ", domains=" + domains + ", keywords=" + keywords + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("domain", domain);
+        map.put("categories", categories);
+        map.put("domains", domains);
+        map.put("keywords", keywords);
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Publisher fromMap(Map<String, Object> map) {
+        // for native storage manager
+        Publisher publisher = new Publisher();
+        publisher.id = (String) map.get("id");
+        publisher.name = (String) map.get("name");
+        publisher.domain = (String) map.get("domain");
+        publisher.categories = (List<String>) map.get("categories");
+        publisher.domains = (List<String>) map.get("domains");
+        publisher.keywords = (List<String>) map.get("keywords");
+        return publisher;
     }
 }
