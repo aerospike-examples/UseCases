@@ -2,7 +2,6 @@ package com.aerospike.usecases.rtb;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;
@@ -10,7 +9,6 @@ import com.aerospike.client.Log;
 import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Demographics;
 import com.aerospike.usecases.rtb.model.Lineitem;
 import com.aerospike.usecases.rtb.model.UserProfile;
 

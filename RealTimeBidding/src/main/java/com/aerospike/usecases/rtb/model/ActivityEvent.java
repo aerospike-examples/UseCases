@@ -54,7 +54,6 @@ enum EventType {
  */
 @AerospikeRecord
 @NoArgsConstructor
-@AllArgsConstructor
 public class ActivityEvent {
     private String id;
     private String pageUrl;
@@ -66,6 +65,13 @@ public class ActivityEvent {
         this.pageUrl = pageUrl;
         this.eventType = eventType;
         this.timestamp = new Date();
+    }
+
+    public ActivityEvent(String id, String pageUrl, EventType eventType, Date timestamp) {
+        this.id = id;
+        this.pageUrl = pageUrl;
+        this.eventType = eventType;
+        this.timestamp = timestamp;
     }
 
     public String getId() {

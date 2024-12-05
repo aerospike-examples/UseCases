@@ -108,6 +108,18 @@ public class Segment {
         this.lastUpdated = new Date();
     }
 
+    public Segment(String id, String name, String description, int size, DeviceType device, Demographics demographics,
+            Date creationDate, Date lastUpdated) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.size = size;
+        this.device = device;
+        this.demographics = demographics;
+        this.creationDate = creationDate;
+        this.lastUpdated = lastUpdated;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -186,19 +198,13 @@ public class Segment {
         return map;
     }
 
-    @SuppressWarnings("unchecked")
     public static Segment fromMap(Map<String, Object> map) {
+
         // for native storage manager
-        Segment segment = new Segment();
-        segment.id = (String) map.get("id");
-        segment.name = (String) map.get("name");
-        segment.description = (String) map.get("description");
-        segment.size = (int) map.get("size");
-        segment.creationDate = (Date) map.get("creationDate");
-        segment.lastUpdated = (Date) map.get("lastUpdated");
-        segment.device = (DeviceType) map.get("device");
-        segment.demographics = (Demographics) map.get("demographics");
-        segment.interests = (List<String>) map.get("interests");
+
+        Segment segment = new Segment((String) map.get("id"), (String) map.get("name"), (String) map.get("description"),
+                (int) map.get("size"), (DeviceType) map.get("device"), (Demographics) map.get("demographics"),
+                (Date) map.get("creationDate"), (Date) map.get("lastUpdated"));
         return segment;
     }
 

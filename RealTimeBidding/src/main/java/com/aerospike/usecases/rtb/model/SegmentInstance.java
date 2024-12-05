@@ -18,13 +18,13 @@ import lombok.NoArgsConstructor;
 public class SegmentInstance {
     @AerospikeKey
     private long segmentId;
-    
+
     // Force the expiry date to be first in the list.
     @AerospikeOrdinal(value = 1)
     private Date expiry;
     private long flags;
     private String partnerId;
-    
+
     public SegmentInstance(long segmentId, String partnerId, long flags, int daysToKeep) {
         long now = new Date().getTime();
         Date expiry = new Date(now + TimeUnit.DAYS.toMillis(daysToKeep));
@@ -32,5 +32,37 @@ public class SegmentInstance {
         this.segmentId = segmentId;
         this.partnerId = partnerId;
         this.flags = flags;
+    }
+
+    public long getSegmentId() {
+        return segmentId;
+    }
+
+    public void setSegmentId(long segmentId) {
+        this.segmentId = segmentId;
+    }
+
+    public Date getExpiry() {
+        return expiry;
+    }
+
+    public void setExpiry(Date expiry) {
+        this.expiry = expiry;
+    }
+
+    public long getFlags() {
+        return flags;
+    }
+
+    public void setFlags(long flags) {
+        this.flags = flags;
+    }
+
+    public String getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(String partnerId) {
+        this.partnerId = partnerId;
     }
 }

@@ -88,7 +88,8 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.aerospike.usecases.rtb.RealTimeBidding</mainClass>
+							<!-- <mainClass>com.aerospike.usecases.rtb.RealTimeBidding</mainClass> -->
+							<mainClass>com.aerospike.usecases.rtb.MockBidder</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>

@@ -126,6 +126,42 @@ public class UserProfile {
         this.location = location;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Demographics getDemographics() {
+        return demographics;
+    }
+
+    public List<String> getInterests() {
+        return interests;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public List<ActivityEvent> getActivity() {
+        return activity;
+    }
+
+    public List<Purchase> getPurchases() {
+        return purchases;
+    }
+
+    public List<String> getLineitems() {
+        return lineitems;
+    }
+
     @Override
     public String toString() {
         return "UserProfile{" + "id='" + id + '\'' + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
