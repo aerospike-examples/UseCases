@@ -4,7 +4,8 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the demographics of a user in the real-time bidding system. This
@@ -89,6 +90,28 @@ public class Demographics {
         return "Demographics{" + "ageRange='" + ageRange + '\'' + ", gender=" + gender + ", incomeLevel='" + incomeLevel
                 + '\'' + ", educationLevel='" + educationLevel + '\'' + ", employmentStatus='" + employmentStatus + '\''
                 + ", matitalStatus='" + matitalStatus + '\'' + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("ageRange", ageRange);
+        map.put("gender", gender);
+        map.put("incomeLevel", incomeLevel);
+        map.put("educationLevel", educationLevel);
+        map.put("employmentStatus", employmentStatus);
+        map.put("matitalStatus", matitalStatus);
+        return map;
+    }
+
+    public static Demographics fromMap(Map<?, ?> map) {
+        String ageRange = (String) map.get("ageRange");
+        Gender gender = (Gender) map.get("gender");
+        String incomeLevel = (String) map.get("incomeLevel");
+        String educationLevel = (String) map.get("educationLevel");
+        String employmentStatus = (String) map.get("employmentStatus");
+        String matitalStatus = (String) map.get("matitalStatus");
+        return new Demographics(gender, ageRange, incomeLevel, educationLevel, employmentStatus, matitalStatus);
     }
 
 }

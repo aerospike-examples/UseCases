@@ -1,6 +1,9 @@
 
 package com.aerospike.usecases.rtb.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.NoArgsConstructor;
@@ -109,6 +112,26 @@ public class Location {
         return "Location{" + "country='" + country + '\'' + ", isoCode='" + isoCode + '\'' + ", region='" + region
                 + '\'' + ", city='" + city + '\'' + ", postalCode='" + postalCode + '\'' + ", latitude=" + latitude
                 + ", longitude=" + longitude + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("country", country);
+        map.put("isoCode", isoCode);
+        map.put("region", region);
+        map.put("city", city);
+        map.put("postalCode", postalCode);
+        map.put("latitude", latitude);
+        map.put("longitude", longitude);
+        return map;
+    }
+
+    public static Location fromMap(Map<?, ?> map) {
+        // for native storage manager
+        return new Location((String) map.get("country"), (String) map.get("isoCode"), (String) map.get("region"),
+                (String) map.get("city"), (String) map.get("postalCode"), (double) map.get("latitude"),
+                (double) map.get("longitude"));
     }
 
 }

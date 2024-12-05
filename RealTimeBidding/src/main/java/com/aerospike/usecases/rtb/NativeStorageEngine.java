@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.aerospike.client.Bin;
@@ -20,12 +21,21 @@ import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.exp.ExpOperation;
+import com.aerospike.client.exp.Expression;
 import com.aerospike.client.exp.MapExp;
+import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.WritePolicy;
+import com.aerospike.usecases.rtb.model.ActivityEvent;
+import com.aerospike.usecases.rtb.model.Audience;
 import com.aerospike.usecases.rtb.model.Campaign;
 import com.aerospike.usecases.rtb.model.Creative;
+import com.aerospike.usecases.rtb.model.Demographics;
 import com.aerospike.usecases.rtb.model.Lineitem;
+import com.aerospike.usecases.rtb.model.LineitemStatus;
+import com.aerospike.usecases.rtb.model.Location;
+import com.aerospike.usecases.rtb.model.Purchase;
 import com.aerospike.usecases.rtb.model.SegmentInstance;
+import com.aerospike.usecases.rtb.model.Size;
 import com.aerospike.usecases.rtb.model.UserProfile;
 import com.aerospike.usecases.rtb.model.Device;
 
@@ -95,6 +105,7 @@ public class NativeStorageEngine implements StorageEngine {
      * @param entry
      * @return
      */
+    @SuppressWarnings("unchecked")
     public SegmentInstance toSegmentInstance(SimpleEntry<Long, Object> entry) {
         SegmentInstance result = new SegmentInstance();
         result.setSegmentId(entry.getKey());
@@ -105,6 +116,7 @@ public class NativeStorageEngine implements StorageEngine {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<SegmentInstance> getActiveSegments(String deviceId) {
         long now = new Date().getTime();
@@ -150,46 +162,152 @@ public class NativeStorageEngine implements StorageEngine {
         return record;
     }
 
+    /**
+     * Saves the given user profile to the Aerospike database. Converts nested
+     * objects into Maps for storage. Converts lists of objects into lists of Maps
+     * for storage.
+     *
+     * @param user the user profile to be saved
+     */
     @Override
     public void saveUser(UserProfile user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveUser'");
+        Bin[] bins = new Bin[] { new Bin("id", user.getId()), new Bin("createdAt", user.getCreatedAt().getTime()),
+                new Bin("updatedAt", user.getUpdatedAt().getTime()),
+                new Bin("demographics", user.getDemographics().asMap()),
+                new Bin("location", user.getLocation().asMap()), new Bin("interests", user.getInterests()),
+                new Bin("activity", user.getActivity().stream().map(ActivityEvent::asMap).collect(Collectors.toList())),
+                new Bin("purchases", user.getPurchases().stream().map(Purchase::asMap).collect(Collectors.toList())),
+                new Bin("lineitems", user.getLineitems()) };
+        client.put(writePolicy, new Key(NAMESPACE, "users", user.getId()), bins);
+
     }
 
+    /**
+     * Saves the given Lineitem object to the Aerospike database. converts nested
+     * objects into Maps for storage. Converts lists of objects into lists of Maps
+     * for storage.
+     *
+     * @param lineitem the Lineitem object to be saved
+     */
     @Override
     public void saveLineitem(Lineitem lineitem) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveLineitem'");
+        Bin[] bins = new Bin[] { new Bin("id", lineitem.getId()),
+                new Bin("startDate", lineitem.getStartDate().getTime()),
+                new Bin("updatedAt", lineitem.getEndDate().getTime()), new Bin("campaignId", lineitem.getCampaignId()),
+                new Bin("name", lineitem.getName()), new Bin("budget", lineitem.getBudget()),
+                new Bin("status", lineitem.getStatus().toString()), };
+        client.put(writePolicy, new Key(NAMESPACE, "lineitems", lineitem.getId()), bins);
     }
 
+    /**
+     * Saves a list of line items to the storage engine.
+     *
+     * @param lineitems the list of Lineitem objects to be saved
+     */
     @Override
     public void saveLineitems(List<Lineitem> lineitems) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveLineitems'");
+        for (Lineitem lineitem : lineitems) {
+            saveLineitem(lineitem);
+        }
     }
 
+    /**
+     * Saves the given campaign to the Aerospike database.
+     *
+     * @param campaign the campaign object to be saved, containing details such as
+     *                 id, name, description, advertiserId, lineitemIds, startDate,
+     *                 endDate, budget, budgetSpent, and status.
+     */
     @Override
     public void saveCampaign(Campaign campaign) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveCampaign'");
+        Bin[] bins = new Bin[] { new Bin("id", campaign.getId()), new Bin("name", campaign.getName()),
+                new Bin("description", campaign.getDescription()), new Bin("advertiserId", campaign.getAdvertiserId()),
+                new Bin("lineitemIds", campaign.getLineitemIds()),
+                new Bin("startDate", campaign.getStartDate().getTime()),
+                new Bin("endDate", campaign.getEndDate().getTime()), new Bin("budget", campaign.getBudget()),
+                new Bin("budgetSpent", campaign.getBudgetSpent()),
+                new Bin("status", campaign.getStatus().toString()), };
+        client.put(writePolicy, new Key(NAMESPACE, "campaigns", campaign.getId()), bins);
     }
 
+    /**
+     * Fetches the user profile for the given user ID from the Aerospike database.
+     *
+     * @param userId the ID of the user to fetch
+     * @return the UserProfile object containing user details, or null if the user
+     *         is not found
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public UserProfile fetchUser(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'fetchUser'");
+        Record record = client.get(null, new Key(NAMESPACE, "users", userId));
+        if (record == null) {
+            return null;
+        }
+        List<?> activityList = record.getList("activity");
+        List<ActivityEvent> activityEvents = activityList.stream()
+                .map(map -> ActivityEvent.fromMap((Map<String, Object>) map)).collect(Collectors.toList());
+        List<?> purchasesList = record.getList("purchases");
+        List<Purchase> purchases = purchasesList.stream().map(map -> Purchase.fromMap((Map<String, Object>) map))
+                .collect(Collectors.toList());
+
+        UserProfile user = new UserProfile();
+        user.setId(record.getString("id"));
+        user.setCreatedAt(new Date(record.getLong("createdAt")));
+        user.setUpdatedAt(new Date(record.getLong("updatedAt")));
+        user.setDemographics(Demographics.fromMap(record.getMap("demographics")));
+        user.setLocation(Location.fromMap(record.getMap("location")));
+        user.setInterests((List<String>) record.getList("interests"));
+        user.setActivity(activityEvents);
+        user.setPurchases(purchases);
+        user.setLineitems((List<String>) record.getList("lineitems"));
+        return user;
     }
 
+    /**
+     * Retrieves a list of active line items based on the provided list of IDs. Uses
+     * a batch read to retrieve multiple records at once with a filter to retrieve
+     * only active line items.
+     * 
+     * @param ids A list of line item IDs to retrieve.
+     * @return A list of active line items corresponding to the provided IDs.
+     * @throws AerospikeException If there is an error retrieving the records from
+     *                            Aerospike.
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public List<Lineitem> activeLineitems(List<String> ids) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getActiveLineitems'");
+        Key[] keys = ids.stream().map(id -> new Key(NAMESPACE, "lineitems", id)).toArray(Key[]::new);
+        Expression filter = Exp.build(Exp.eq(Exp.stringBin("status"), Exp.val(LineitemStatus.ACTIVE.toString())));
+        BatchPolicy batchPolicy = new BatchPolicy();
+        batchPolicy.filterExp = filter;
+        Record[] records = client.get(batchPolicy, keys);
+        return Arrays.stream(records).filter(record -> record != null).map(record -> {
+            Lineitem lineitem = new Lineitem(record.getString("id"), record.getString("campaignId"),
+                    record.getString("name"), new Date(record.getLong("startDate")),
+                    new Date(record.getLong("endDate")), record.getInt("budget"),
+                    Audience.fromMap(record.getMap("audience")), LineitemStatus.valueOf(record.getString("status")),
+                    (List<String>) (record.getList("creatives")));
+            return lineitem;
+        }).collect(Collectors.toList());
+
     }
 
+    /**
+     * Saves a list of Creative objects to the Aerospike database.
+     *
+     * @param creatives the list of Creative objects to be saved
+     */
     @Override
     public void saveCreatives(List<Creative> creatives) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveCreatives'");
+
+        for (Creative creative : creatives) {
+            Bin[] bins = new Bin[] { new Bin("id", creative.getId()), new Bin("name", creative.getName()),
+                    new Bin("url", creative.getUrl()), new Bin("advertiserId", creative.getAdvertiserId()),
+                    new Bin("lineitemId", creative.getLineitemId()), new Bin("type", creative.getType()),
+                    new Bin("sizes", creative.getSizes().stream().map(Size::asMap).collect(Collectors.toList())) };
+            client.put(writePolicy, new Key(NAMESPACE, "creatives", creative.getId()), bins);
+        }
     }
 
 }

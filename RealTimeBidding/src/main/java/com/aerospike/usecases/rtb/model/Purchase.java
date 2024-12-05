@@ -5,6 +5,8 @@ import java.util.Date;
 import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.NoArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a purchase made by a user and is part of a UserProfile
@@ -130,6 +132,28 @@ public class Purchase {
         return activityEventId;
     }
 
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("purchaseDate", purchaseDate);
+        map.put("productSku", productSku);
+        map.put("description", description);
+        map.put("price", price);
+        map.put("currency", currency);
+        map.put("category", category);
+        map.put("subCategory", subCategory);
+        map.put("brand", brand);
+        map.put("model", model);
+        map.put("color", color);
+        map.put("size", size);
+        map.put("condition", condition);
+        map.put("vendorUrl", vendorUrl);
+        map.put("productUrl", productUrl);
+        map.put("activityEventId", activityEventId);
+        return map;
+    }
+
     @Override
     public String toString() {
         return "Purchase{" + "id='" + id + '\'' + ", purchaseDate=" + purchaseDate + ", productSku='" + productSku
@@ -138,6 +162,17 @@ public class Purchase {
                 + ", model='" + model + '\'' + ", color='" + color + '\'' + ", size='" + size + '\'' + ", condition='"
                 + condition + '\'' + ", vendorUrl='" + vendorUrl + '\'' + ", productUrl='" + productUrl + '\''
                 + ", activityEventId='" + activityEventId + '\'' + '}';
+    }
+
+    public static Purchase fromMap(Map<?, ?> map) {
+        // for native storage manager
+        Purchase purchase = new Purchase((String) map.get("id"), (Date) map.get("purchaseDate"),
+                (String) map.get("productSku"), (String) map.get("description"), (double) map.get("price"),
+                (String) map.get("currency"), (String) map.get("category"), (String) map.get("subCategory"),
+                (String) map.get("brand"), (String) map.get("model"), (String) map.get("color"),
+                (String) map.get("size"), (String) map.get("condition"), (String) map.get("vendorUrl"),
+                (String) map.get("productUrl"), (String) map.get("activityEventId"));
+        return purchase;
     }
 
 }

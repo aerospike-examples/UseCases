@@ -2,6 +2,7 @@ package com.aerospike.usecases.rtb.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.aerospike.mapper.annotations.AerospikeEmbed;
 import com.aerospike.mapper.annotations.AerospikeEmbed.EmbedType;
@@ -85,5 +86,14 @@ public class Audience {
     @Override
     public String toString() {
         return "Audience{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", segmentIds=" + segmentIds + '}';
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Audience fromMap(Map<?, ?> map) {
+        Audience audience = new Audience();
+        audience.id = (String) map.get("id");
+        audience.name = (String) map.get("name");
+        audience.segmentIds = (List<String>) map.get("segmentIds");
+        return audience;
     }
 }

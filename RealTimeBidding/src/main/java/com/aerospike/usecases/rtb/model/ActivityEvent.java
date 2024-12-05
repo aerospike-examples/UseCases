@@ -7,6 +7,8 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 import lombok.AllArgsConstructor;
 
 import lombok.NoArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 enum EventType {
     VIEW, CLICK, IMPRESSION, INCART, PURCHASE
@@ -80,6 +82,22 @@ public class ActivityEvent {
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public Map<String, Object> asMap() {
+        // for native storage manager
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("pageUrl", pageUrl);
+        map.put("eventType", eventType);
+        map.put("timestamp", timestamp);
+        return map;
+    }
+
+    public static ActivityEvent fromMap(Map<String, Object> map) {
+        // for native storage manager
+        return new ActivityEvent((String) map.get("id"), (String) map.get("pageUrl"), (EventType) map.get("eventType"),
+                (Date) map.get("timestamp"));
     }
 
 }

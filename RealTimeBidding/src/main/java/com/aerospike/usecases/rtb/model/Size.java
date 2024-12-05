@@ -4,6 +4,8 @@ import com.aerospike.mapper.annotations.AerospikeRecord;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the size of a banner with width and height dimensions. This class
@@ -41,5 +43,12 @@ public class Size {
     @Override
     public String toString() {
         return "Size{" + "width=" + width + ", height=" + height + '}';
+    }
+
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("width", width);
+        map.put("height", height);
+        return map;
     }
 }
