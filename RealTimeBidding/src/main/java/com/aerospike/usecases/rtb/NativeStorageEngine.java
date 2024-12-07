@@ -241,7 +241,7 @@ public class NativeStorageEngine implements StorageEngine {
     @SuppressWarnings("unchecked")
     @Override
     public UserProfile fetchUser(String userId) {
-        Record record = client.get(null, new Key(NAMESPACE, "users", userId));
+        Record record = client.get(null, new Key(NAMESPACE, "profiles", userId));
         if (record == null) {
             return null;
         }
@@ -283,7 +283,7 @@ public class NativeStorageEngine implements StorageEngine {
         BatchPolicy batchPolicy = new BatchPolicy();
         batchPolicy.filterExp = filter;
         Record[] records = client.get(batchPolicy, keys);
-        return Arrays.stream(records).filter(record -> record != null).map(record -> {
+        List<Lineitem> lineitems = Arrays.stream(records).filter(record -> record != null).map(record -> {
             Lineitem lineitem = new Lineitem(record.getString("id"), record.getString("campaignId"),
                     record.getString("name"), new Date(record.getLong("startDate")),
                     new Date(record.getLong("endDate")), record.getInt("budget"),
@@ -291,6 +291,7 @@ public class NativeStorageEngine implements StorageEngine {
                     (List<String>) (record.getList("creatives")));
             return lineitem;
         }).collect(Collectors.toList());
+        return lineitems;
 
     }
 

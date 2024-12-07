@@ -90,6 +90,9 @@ public class Audience {
 
     @SuppressWarnings("unchecked")
     public static Audience fromMap(Map<?, ?> map) {
+        if (map == null) {
+            return null;
+        }
         Audience audience = new Audience();
         audience.id = (String) map.get("id");
         audience.name = (String) map.get("name");

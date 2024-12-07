@@ -110,8 +110,10 @@ public class MockDataGenerator {
         Log.info("Generating user profiles ...");
         for (long thisUserProfileId = startUser; thisUserProfileId < endUser; thisUserProfileId++) {
 
+            List<String> interests = RandomData.randomInterests();
+
             UserProfile userProfile = new UserProfile(String.valueOf(thisUserProfileId),
-                    RandomData.randomDemographics(), RandomData.randomLocation());
+                    RandomData.randomDemographics(), interests, RandomData.randomLocation());
 
             try {
                 long startTime = System.nanoTime();

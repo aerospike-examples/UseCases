@@ -531,4 +531,15 @@ public class RandomData {
 
         return response;
     }
+
+    public static List<String> randomInterests() {
+        Random random = new Random();
+        int interestCount = ThreadLocalRandom.current().nextInt(3, 8);
+        List<String> interests = new ArrayList<>();
+        for (int i = 0; i < interestCount; i++) {
+            int index = random.nextInt(iabContentCategories.size());
+            interests.add(iabContentCategories.get(index));
+        }
+        return interests;
+    }
 }

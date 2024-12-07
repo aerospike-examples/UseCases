@@ -96,7 +96,7 @@ public class Demographics {
         // for native storage manager
         Map<String, Object> map = new HashMap<>();
         map.put("ageRange", ageRange);
-        map.put("gender", gender);
+        map.put("gender", gender.toString());
         map.put("incomeLevel", incomeLevel);
         map.put("educationLevel", educationLevel);
         map.put("employmentStatus", employmentStatus);
@@ -106,7 +106,7 @@ public class Demographics {
 
     public static Demographics fromMap(Map<?, ?> map) {
         String ageRange = (String) map.get("ageRange");
-        Gender gender = (Gender) map.get("gender");
+        Gender gender = Gender.valueOf((String) map.get("gender"));
         String incomeLevel = (String) map.get("incomeLevel");
         String educationLevel = (String) map.get("educationLevel");
         String employmentStatus = (String) map.get("employmentStatus");

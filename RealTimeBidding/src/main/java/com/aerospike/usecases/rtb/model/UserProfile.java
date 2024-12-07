@@ -84,11 +84,12 @@ public class UserProfile {
         this.lineitemIds = new ArrayList<String>();
     }
 
-    public UserProfile(String id, Demographics demographics, Location location) {
+    public UserProfile(String id, Demographics demographics, List<String> interests, Location location) {
         this();
         this.id = id;
         this.demographics = demographics;
         this.location = location;
+        this.interests = interests;
 
         this.createdAt = new Date();
         this.updatedAt = new Date();
