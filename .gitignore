@@ -32,11 +32,10 @@ hs_err_pid*
 replay_pid*
 
 .project
-.target
+**/target
 .metadata
 bin/
 tmp/
-target/
 .settings/
 *.tmp
 *.bak
