@@ -42,7 +42,11 @@ public class MockBidder {
             return null;
         }
         // Find up to 20 active line items for this user
-        List<Lineitem> activeLineitems = this.storageEngine.activeLineitems(userProfile.getLineitems());
+        List<Lineitem> activeLineitems = this.storageEngine.activeLineitems(userProfile.getLineitemIds());
+        if (activeLineitems.size() == 0) {
+            System.out.println("No active line items found therefore no bid");
+            return null;
+        }
         // Select the best line item for this bid request (randomly selected in this
         // example)
         Lineitem selectedLineitem = activeLineitems.get(ThreadLocalRandom.current().nextInt(activeLineitems.size()));
@@ -52,39 +56,37 @@ public class MockBidder {
         return bidResponse;
     }
 
-    /**
-     * The main method to simulate the bidding process.
-     *
-     * @param args Command line arguments (not used).
-     */
-    public static void main(String[] args) {
-        System.out.println("MocBidder.main()");
+    // testing only
+    // public static void main(String[] args) {
+    // System.out.println("MocBidder.main()");
 
-        // Initialize Aerospike client
-        AerospikeClient client = new AerospikeClient(null, "localhost", 3000);
+    // // Initialize Aerospike client
+    // AerospikeClient client = new AerospikeClient(null, "localhost", 3000);
 
-        // Initialize storage engine with the Aerospike client
-        ObjectMapperStorageEngine storage = new ObjectMapperStorageEngine(client);
+    // // Initialize storage engine with the Aerospike client
+    // ObjectMapperStorageEngine storage = new ObjectMapperStorageEngine(client);
 
-        // Create an instance of MockBidder
-        MockBidder mockBidder = new MockBidder(storage);
+    // // Create an instance of MockBidder
+    // MockBidder mockBidder = new MockBidder(storage);
 
-        // Define the number of bid requests to simulate
-        int numberOfBidRequests = 1000;
+    // // Define the number of bid requests to simulate
+    // int numberOfBidRequests = 1000;
 
-        // Define the number of users and starting user ID
-        long numberOfUsers = 50000;
-        long startUser = 1000;
+    // // Define the number of users and starting user ID
+    // long numberOfUsers = 50000;
+    // long startUser = 1000;
 
-        // Loop through the number of bid requests
-        for (int i = 0; i < numberOfBidRequests; i++) {
-            // Create a mock bid request
-            BidRequest bidRequest = RandomData.randomBidRequest(startUser, numberOfUsers + startUser);
+    // // Loop through the number of bid requests
+    // for (int i = 0; i < numberOfBidRequests; i++) {
+    // // Create a mock bid request
+    // BidRequest bidRequest = RandomData.randomBidRequest(startUser, numberOfUsers
+    // + startUser);
 
-            BidResponse bidResponse = mockBidder.processBidRequest(bidRequest);
+    // BidResponse bidResponse = mockBidder.processBidRequest(bidRequest);
 
-            // Print the bid request and response IDs
-            System.out.println("Bid request: " + bidRequest.getId() + " Bid response: " + bidResponse.getId());
-        }
-    }
+    // // Print the bid request and response IDs
+    // System.out.println("Bid request: " + bidRequest.getId() + " Bid response: " +
+    // bidResponse.getId());
+    // }
+    // }
 }

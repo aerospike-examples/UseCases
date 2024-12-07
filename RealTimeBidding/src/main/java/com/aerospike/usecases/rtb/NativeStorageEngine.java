@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
 import com.aerospike.client.Value;
+import com.aerospike.client.cdt.ListOperation;
 import com.aerospike.client.cdt.MapOperation;
 import com.aerospike.client.cdt.MapOrder;
 import com.aerospike.client.cdt.MapPolicy;
@@ -172,13 +174,12 @@ public class NativeStorageEngine implements StorageEngine {
     @Override
     public void saveUser(UserProfile user) {
         Bin[] bins = new Bin[] { new Bin("id", user.getId()), new Bin("createdAt", user.getCreatedAt().getTime()),
-                new Bin("updatedAt", user.getUpdatedAt().getTime()),
-                new Bin("demographics", user.getDemographics().asMap()),
+                new Bin("updatedAt", new Date().getTime()), new Bin("demographics", user.getDemographics().asMap()),
                 new Bin("location", user.getLocation().asMap()), new Bin("interests", user.getInterests()),
                 new Bin("activity", user.getActivity().stream().map(ActivityEvent::asMap).collect(Collectors.toList())),
                 new Bin("purchases", user.getPurchases().stream().map(Purchase::asMap).collect(Collectors.toList())),
-                new Bin("lineitems", user.getLineitems()) };
-        client.put(writePolicy, new Key(NAMESPACE, "users", user.getId()), bins);
+                new Bin("lineitemIds", user.getLineitemIds()) };
+        client.put(writePolicy, new Key(NAMESPACE, "profiles", user.getId()), bins);
 
     }
 
@@ -260,7 +261,7 @@ public class NativeStorageEngine implements StorageEngine {
         user.setInterests((List<String>) record.getList("interests"));
         user.setActivity(activityEvents);
         user.setPurchases(purchases);
-        user.setLineitems((List<String>) record.getList("lineitems"));
+        user.setLineitemIds((List<String>) record.getList("lineitemIds"));
         return user;
     }
 
@@ -308,6 +309,22 @@ public class NativeStorageEngine implements StorageEngine {
                     new Bin("sizes", creative.getSizes().stream().map(Size::asMap).collect(Collectors.toList())) };
             client.put(writePolicy, new Key(NAMESPACE, "creatives", creative.getId()), bins);
         }
+    }
+
+    @Override
+    public Boolean userExists(String userId) {
+        Key key = new Key(NAMESPACE, "profiles", userId);
+        return client.exists(null, key);
+    }
+
+    @Override
+    public void assignLineitemsToUser(String userId, List<Lineitem> lineitems) {
+        List<String> lineitemIds = lineitems.stream().map(Lineitem::getId).collect(Collectors.toList());
+        Key userKey = new Key(NAMESPACE, "profiles", userId);
+        client.operate(null, userKey,
+                ListOperation.appendItems("lineitemIds",
+                        lineitemIds.stream().map(com.aerospike.client.Value::get).collect(Collectors.toList())),
+                Operation.put(new Bin("updatedAt", new Date().getTime())));
     }
 
 }

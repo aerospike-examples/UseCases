@@ -64,11 +64,27 @@ public interface StorageEngine {
     UserProfile fetchUser(String userId);
 
     /**
+     * Checks if a user with the given userId exists in the storage engine.
+     *
+     * @param userId the unique identifier of the user to check for existence
+     * @return true if the user exists, false otherwise
+     */
+    Boolean userExists(String userId);
+
+    /**
      * Get a list of active lineitems
      * 
      * @param List<String> ids Linitem ids
      * @return
      */
     public List<Lineitem> activeLineitems(List<String> ids);
+
+    /**
+     * Assigns a list of line items to a user.
+     *
+     * @param userId    the ID of the user to whom the line items will be assigned
+     * @param lineitems the list of line items to be assigned to the user
+     */
+    public void assignLineitemsToUser(String userId, List<Lineitem> lineitems);
 
 }

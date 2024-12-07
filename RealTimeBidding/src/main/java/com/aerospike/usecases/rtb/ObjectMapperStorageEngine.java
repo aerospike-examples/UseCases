@@ -5,8 +5,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.aerospike.client.AerospikeException;
+import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
+import com.aerospike.client.Key;
+import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
+import com.aerospike.client.admin.User;
+import com.aerospike.client.cdt.ListOperation;
+import com.aerospike.client.cdt.ListWriteFlags;
 import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
 import com.aerospike.client.exp.Exp;
@@ -43,7 +50,17 @@ public class ObjectMapperStorageEngine implements StorageEngine {
      */
     @Override
     public void saveUser(UserProfile user) {
+        user.setUpdatedAt(new Date());
         mapper.save(user);
+    }
+
+    @Override
+    public Boolean userExists(String userId) {
+        IAerospikeClient client = mapper.getClient();
+        String nameSpace = mapper.getNamespace(UserProfile.class);
+        String setName = mapper.getSet(UserProfile.class);
+        Key key = new Key(nameSpace, setName, userId);
+        return client.exists(null, key);
     }
 
     /**
@@ -68,6 +85,25 @@ public class ObjectMapperStorageEngine implements StorageEngine {
         // Filter out any null Lineitems and return the list
         return Arrays.stream(lineitems).filter(lineitem -> lineitem != null).collect(Collectors.toList());
 
+    }
+
+    public void assignLineitemsToUser(String userId, List<Lineitem> lineitems) {
+        try {
+
+            List<String> lineitemIds = lineitems.stream().map(Lineitem::getId).collect(Collectors.toList());
+
+            IAerospikeClient client = this.mapper.getClient();
+            String nameSpace = mapper.getNamespace(UserProfile.class);
+            String setName = mapper.getSet(UserProfile.class);
+            Key userKey = new Key(nameSpace, setName, userId);
+            client.operate(null, userKey,
+                    ListOperation.appendItems("lineitemIds",
+                            lineitemIds.stream().map(com.aerospike.client.Value::get).collect(Collectors.toList())),
+                    Operation.put(new Bin("updatedAt", new Date().getTime())));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -52,7 +52,7 @@ public class MocDSP {
 
     private static StorageEngine getStorageEngine(CommandLine cl, IAerospikeClient client, boolean useCloud) {
         String algorithm = cl.getOptionValue("algorithm", "native");
-        String namespace = useCloud ? "aerospike_cloud" : "test";
+        String namespace = useCloud ? "aerospike_cloud" : "rtb";
         // Use a system property for the Object Mapper version
         System.setProperty("rtb.namespace", namespace);
         StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper") ? new ObjectMapperStorageEngine(client)
@@ -95,7 +95,7 @@ public class MocDSP {
             break;
 
         case "bidder":
-            checkRequiredParameters(cl, options, command.toLowerCase(), "device", "segment", "partner");
+            checkRequiredParameters(cl, options, command.toLowerCase());
             checkConnectionOptions(connector, cl, options);
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
@@ -113,8 +113,12 @@ public class MocDSP {
                     BidRequest bidRequest = RandomData.randomBidRequest(startUser, numberOfUsers + startUser);
                     // process the bid request
                     BidResponse bidResponse = mockBidder.processBidRequest(bidRequest);
+                    if (bidResponse == null) {
+                        Log.info("No bid response for bid request: " + bidRequest.getId());
+                        continue;
+                    }
                     // Print the bid request and response IDs
-                    System.out.println("Bid request: " + bidRequest.getId() + " Bid response: " + bidResponse.getId());
+                    Log.info("Bid request: " + bidRequest.getId() + " Bid response: " + bidResponse.getId());
 
                 }
             }

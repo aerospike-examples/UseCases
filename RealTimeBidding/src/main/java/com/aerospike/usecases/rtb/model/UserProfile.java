@@ -75,13 +75,13 @@ public class UserProfile {
     private List<Purchase> purchases;
     // eligible lineitem IDs for this user
     @AerospikeEmbed(type = EmbedType.LIST)
-    private List<String> lineitems;
+    private List<String> lineitemIds;
 
     public UserProfile() {
         this.interests = new ArrayList<String>();
         this.activity = new ArrayList<ActivityEvent>();
         this.purchases = new ArrayList<Purchase>();
-        this.lineitems = new ArrayList<String>();
+        this.lineitemIds = new ArrayList<String>();
     }
 
     public UserProfile(String id, Demographics demographics, Location location) {
@@ -95,11 +95,11 @@ public class UserProfile {
     }
 
     public void addLineitem(Lineitem lineitem) {
-        this.lineitems.add(lineitem.getId());
+        this.lineitemIds.add(lineitem.getId());
     }
 
-    public void setLineitems(List<String> lineitems) {
-        this.lineitems = lineitems;
+    public void setLineitemIds(List<String> lineitemids) {
+        this.lineitemIds = lineitemids;
     }
 
     public void addActivityEvent(ActivityEvent activityEvent) {
@@ -124,6 +124,10 @@ public class UserProfile {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getId() {
@@ -158,14 +162,14 @@ public class UserProfile {
         return purchases;
     }
 
-    public List<String> getLineitems() {
-        return lineitems;
+    public List<String> getLineitemIds() {
+        return lineitemIds;
     }
 
     @Override
     public String toString() {
         return "UserProfile{" + "id='" + id + '\'' + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
                 + ", demographics=" + demographics + ", interests=" + interests + ", location=" + location
-                + ", activity=" + activity + ", purchases=" + purchases + ", lineitems=" + lineitems + '}';
+                + ", activity=" + activity + ", purchases=" + purchases + ", lineitems=" + lineitemIds + '}';
     }
 }

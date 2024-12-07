@@ -198,7 +198,7 @@ public class AerospikeConnector {
         if (cl.hasOption("useCloud")) {
             this.useCloud = true;
         }
-        this.hosts = cl.getOptionValue("hosts");
+        this.hosts = cl.getOptionValue("hosts", "localhost:3000");
         this.userName = cl.getOptionValue("user");
         this.password = cl.getOptionValue("password");
         this.tls = parseTlsOptions(cl.getOptionValue("tls"));
