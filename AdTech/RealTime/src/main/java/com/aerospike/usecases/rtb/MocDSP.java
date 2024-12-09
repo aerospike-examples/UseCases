@@ -13,16 +13,23 @@ import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Log;
 import com.aerospike.usecases.common.AerospikeConnector;
 import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
-import com.aerospike.usecases.rtb.model.bid.BidRequest;
-import com.aerospike.usecases.rtb.model.bid.BidResponse;
+import com.aerospike.usecases.model.bid.BidRequest;
+import com.aerospike.usecases.model.bid.BidResponse;
 
+// Sample command lines:
+// -c generate -h localhost:3100
+// -c bidder -h localhost:3100 
 public class MocDSP {
+
+    private static final long USER_START = 1000;
+    private static final long USER_TOTAL = 50000;
+    private static final long CAMPAIGNS_TOTAL = 1000;
 
     private static void usage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        String syntax = RealTimeBidding.class.getName() + " [<options>]";
+        String syntax = MocDSP.class.getName() + " [<options>]";
         formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
         System.out.println(sw.toString());
         System.exit(1);
@@ -86,11 +93,8 @@ public class MocDSP {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
                 MockDataGenerator populator = new MockDataGenerator(storageEngine);
                 TimingMetric timer = new TimingMetric("data-timer", "");
-                long numberOfUsers = 50000;
-                long startUser = 1000;
-                long numberOfCampaigns = 20000;
-                populator.generateUsers(timer, startUser, numberOfUsers + startUser);
-                populator.generateCampaignsAndLineitems(timer, numberOfCampaigns, startUser, numberOfUsers + startUser);
+                populator.generateUsers(timer, USER_START, USER_TOTAL + USER_START);
+                populator.generateCampaignsAndLineitems(timer, CAMPAIGNS_TOTAL, USER_START, USER_TOTAL + USER_START);
             }
             break;
 
@@ -103,14 +107,10 @@ public class MocDSP {
                 // Define the number of bid requests to simulate
                 int numberOfBidRequests = 1000;
 
-                // Define the number of users and starting user ID
-                long numberOfUsers = 50000;
-                long startUser = 1000;
-
                 // Loop through the number of bid requests
                 for (int i = 0; i < numberOfBidRequests; i++) {
                     // Create a mock bid request
-                    BidRequest bidRequest = RandomData.randomBidRequest(startUser, numberOfUsers + startUser);
+                    BidRequest bidRequest = RandomData.randomBidRequest(USER_START, USER_TOTAL + USER_START);
                     // process the bid request
                     BidResponse bidResponse = mockBidder.processBidRequest(bidRequest);
                     if (bidResponse == null) {

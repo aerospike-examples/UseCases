@@ -1,26 +1,25 @@
 package com.aerospike.usecases.rtb;
 
 import java.util.Date;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.aerospike.usecases.rtb.model.Campaign;
-import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Demographics;
-import com.aerospike.usecases.rtb.model.Gender;
-import com.aerospike.usecases.rtb.model.Lineitem;
-import com.aerospike.usecases.rtb.model.LineitemStatus;
-import com.aerospike.usecases.rtb.model.Location;
-import com.aerospike.usecases.rtb.model.Size;
-import com.aerospike.usecases.rtb.model.Publisher;
-import com.aerospike.usecases.rtb.model.bid.Bid;
-import com.aerospike.usecases.rtb.model.bid.BidRequest;
-import com.aerospike.usecases.rtb.model.bid.BidResponse;
-import com.aerospike.usecases.rtb.model.bid.SeatBid;
+import com.aerospike.usecases.model.Campaign;
+import com.aerospike.usecases.model.Creative;
+import com.aerospike.usecases.model.Demographics;
+import com.aerospike.usecases.model.Gender;
+import com.aerospike.usecases.model.Lineitem;
+import com.aerospike.usecases.model.LineitemStatus;
+import com.aerospike.usecases.model.Location;
+import com.aerospike.usecases.model.Publisher;
+import com.aerospike.usecases.model.Size;
+import com.aerospike.usecases.model.bid.Bid;
+import com.aerospike.usecases.model.bid.BidRequest;
+import com.aerospike.usecases.model.bid.BidResponse;
+import com.aerospike.usecases.model.bid.SeatBid;
 
 import java.util.UUID;
 

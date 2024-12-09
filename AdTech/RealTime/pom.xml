@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.timf</groupId>
-  <artifactId>RealTime</artifactId>
-  <version>0.1.0</version>
+  <artifactId>DSP</artifactId>
+  <version>0.1.1</version>
   <name>Example workflow for ad-tech real-time bidding</name>
   <description>A sample project designed to show how to implement the database portions of a real-time bidding workflow.</description>
   <properties>
@@ -89,7 +89,6 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<!-- <mainClass>com.aerospike.usecases.rtb.RealTimeBidding</mainClass> -->
 							<mainClass>com.aerospike.usecases.rtb.MockBidder</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>

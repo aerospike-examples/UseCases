@@ -9,11 +9,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
+import com.aerospike.usecases.model.Device;
+import com.aerospike.usecases.model.SegmentInstance;
 import com.aerospike.client.Log;
 import com.aerospike.usecases.common.MonitorService;
-import com.aerospike.usecases.rtb.model.SegmentInstance;
-import com.aerospike.usecases.rtb.model.Device;
 
+@Deprecated
 public class DataPopulator {
     public static final int DAYS_TO_KEEP_SEGMENTS = 30;
     private final AtomicLong devicesInserted = new AtomicLong();

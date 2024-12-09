@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;
-import com.aerospike.usecases.rtb.model.Lineitem;
-import com.aerospike.usecases.rtb.model.UserProfile;
-import com.aerospike.usecases.rtb.model.bid.BidRequest;
-import com.aerospike.usecases.rtb.model.bid.BidResponse;
+import com.aerospike.usecases.model.Lineitem;
+import com.aerospike.usecases.model.UserProfile;
+import com.aerospike.usecases.model.bid.BidRequest;
+import com.aerospike.usecases.model.bid.BidResponse;
 
 /**
  * The MockBidder class simulates the behavior of a Real-Time Bidding (RTB)

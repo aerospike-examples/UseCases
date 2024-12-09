@@ -1,5 +1,5 @@
-# Installation and Running the Real-Time Bidding Application
-This guide outlines the steps to install and set up the real-time bidding application using the provided code.
+# Installation and Running the Real-Time Bidding Demonstration
+This guide outlines the steps to install and set up the real-time bidding demonstration using the provided code.
 
 ## Prerequisites:
 - Java Development Kit (JDK): Make sure you have a compatible version of the JDK installed (Java 11 or later is recommended).
@@ -33,11 +33,14 @@ If you haven't already, start an Aerospike server. There are 2 supported ways of
 
 #### Using native Aerospike
 Define a namespace in your application configuration. The code uses `rtb` as a default namespace. You can modify this in these classes:
-- `UserProfile` 
+- `Audience` 
 - `Campaign`
-- `Lineitem`
+- `Creative`
+- `Device` deprecated
+- `Lineitem` 
 - `Segment`
-- `Creative` 
+- `SegmentInstance` deprecated
+- `UserProfile`
 
 where the `StorageEngine` is initialized.
 
@@ -70,13 +73,13 @@ java -jar target/RealTimeBidding-x.x.x.jar <command-line-options>
     -h abc123.asdb.io -U 1234abc -P 1234abc
 ```
 - The application will default to using Aerospike Cloud if there is just one host name passed and it ends in “`asdb.io`”, or can be forced to use Aerospike Cloud by passing the parameter `--useCloud`.
-- Refer to the command-line options described in the `RealTimeBidding.java` file to understand how to execute different operations.
+- Refer to the command-line options described in the `MocDSP.java` file to understand how to execute different operations.
     
 ## Example Command-Line Usage:
 
-### To generate devices and segments:
+### To generate user profiles, campaigns and lineitems:
 ```
-java -jar target/RealTimeBidding-x.x.x.jar -c generate -h localhost:3000 -nD 1000 -nS 10000 -aS 100
+java -jar target/RealTimeBidding-x.x.x.jar -c generate -h localhost:3000 -h localhost:3000
 ```
 
 ### To insert a segment into a device:

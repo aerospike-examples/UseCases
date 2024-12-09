@@ -25,13 +25,13 @@ import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.mapper.tools.AeroMapper;
 import com.aerospike.mapper.tools.virtuallist.ReturnType;
 import com.aerospike.mapper.tools.virtuallist.VirtualList;
-import com.aerospike.usecases.rtb.model.Campaign;
-import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Device;
-import com.aerospike.usecases.rtb.model.Lineitem;
-import com.aerospike.usecases.rtb.model.LineitemStatus;
-import com.aerospike.usecases.rtb.model.SegmentInstance;
-import com.aerospike.usecases.rtb.model.UserProfile;
+import com.aerospike.usecases.model.Campaign;
+import com.aerospike.usecases.model.Creative;
+import com.aerospike.usecases.model.Device;
+import com.aerospike.usecases.model.Lineitem;
+import com.aerospike.usecases.model.LineitemStatus;
+import com.aerospike.usecases.model.SegmentInstance;
+import com.aerospike.usecases.model.UserProfile;
 
 public class ObjectMapperStorageEngine implements StorageEngine {
     // The mapper to do object to Aerospike bidirectional mapping

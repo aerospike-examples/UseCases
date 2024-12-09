@@ -3,12 +3,12 @@ package com.aerospike.usecases.rtb;
 import java.util.List;
 
 import com.aerospike.client.Record;
-import com.aerospike.usecases.rtb.model.Campaign;
-import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Device;
-import com.aerospike.usecases.rtb.model.Lineitem;
-import com.aerospike.usecases.rtb.model.SegmentInstance;
-import com.aerospike.usecases.rtb.model.UserProfile;
+import com.aerospike.usecases.model.Campaign;
+import com.aerospike.usecases.model.Creative;
+import com.aerospike.usecases.model.Device;
+import com.aerospike.usecases.model.Lineitem;
+import com.aerospike.usecases.model.SegmentInstance;
+import com.aerospike.usecases.model.UserProfile;
 
 public interface StorageEngine {
 

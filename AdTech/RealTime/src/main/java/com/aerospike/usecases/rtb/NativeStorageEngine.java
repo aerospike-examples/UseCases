@@ -27,19 +27,19 @@ import com.aerospike.client.exp.Expression;
 import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.WritePolicy;
-import com.aerospike.usecases.rtb.model.ActivityEvent;
-import com.aerospike.usecases.rtb.model.Audience;
-import com.aerospike.usecases.rtb.model.Campaign;
-import com.aerospike.usecases.rtb.model.Creative;
-import com.aerospike.usecases.rtb.model.Demographics;
-import com.aerospike.usecases.rtb.model.Lineitem;
-import com.aerospike.usecases.rtb.model.LineitemStatus;
-import com.aerospike.usecases.rtb.model.Location;
-import com.aerospike.usecases.rtb.model.Purchase;
-import com.aerospike.usecases.rtb.model.SegmentInstance;
-import com.aerospike.usecases.rtb.model.Size;
-import com.aerospike.usecases.rtb.model.UserProfile;
-import com.aerospike.usecases.rtb.model.Device;
+import com.aerospike.usecases.model.ActivityEvent;
+import com.aerospike.usecases.model.Audience;
+import com.aerospike.usecases.model.Campaign;
+import com.aerospike.usecases.model.Creative;
+import com.aerospike.usecases.model.Demographics;
+import com.aerospike.usecases.model.Device;
+import com.aerospike.usecases.model.Lineitem;
+import com.aerospike.usecases.model.LineitemStatus;
+import com.aerospike.usecases.model.Location;
+import com.aerospike.usecases.model.Purchase;
+import com.aerospike.usecases.model.SegmentInstance;
+import com.aerospike.usecases.model.Size;
+import com.aerospike.usecases.model.UserProfile;
 
 public class NativeStorageEngine implements StorageEngine {
     private final String NAMESPACE;
@@ -109,12 +109,10 @@ public class NativeStorageEngine implements StorageEngine {
      */
     @SuppressWarnings("unchecked")
     public SegmentInstance toSegmentInstance(SimpleEntry<Long, Object> entry) {
-        SegmentInstance result = new SegmentInstance();
-        result.setSegmentId(entry.getKey());
         List<Object> objects = (List<Object>) entry.getValue();
-        result.setExpiry(objects.get(0) == null ? null : new Date((long) objects.get(0)));
-        result.setFlags((long) objects.get(1));
-        result.setPartnerId((String) objects.get(2));
+        Date expiry = objects.get(0) == null ? null : new Date((long) objects.get(0));
+        SegmentInstance result = new SegmentInstance(entry.getKey(), expiry, (long) objects.get(1),
+                (String) objects.get(2));
         return result;
     }
 
@@ -252,16 +250,10 @@ public class NativeStorageEngine implements StorageEngine {
         List<Purchase> purchases = purchasesList.stream().map(map -> Purchase.fromMap((Map<String, Object>) map))
                 .collect(Collectors.toList());
 
-        UserProfile user = new UserProfile();
-        user.setId(record.getString("id"));
-        user.setCreatedAt(new Date(record.getLong("createdAt")));
-        user.setUpdatedAt(new Date(record.getLong("updatedAt")));
-        user.setDemographics(Demographics.fromMap(record.getMap("demographics")));
-        user.setLocation(Location.fromMap(record.getMap("location")));
-        user.setInterests((List<String>) record.getList("interests"));
-        user.setActivity(activityEvents);
-        user.setPurchases(purchases);
-        user.setLineitemIds((List<String>) record.getList("lineitemIds"));
+        UserProfile user = new UserProfile(record.getString("id"), new Date(record.getLong("createdAt")),
+                new Date(record.getLong("updatedAt")), Demographics.fromMap(record.getMap("demographics")),
+                (List<String>) record.getList("interests"), Location.fromMap(record.getMap("location")), activityEvents,
+                purchases, (List<String>) record.getList("lineitemIds"));
         return user;
     }
 

@@ -16,12 +16,13 @@ import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Log;
 import com.aerospike.client.Record;
 import com.aerospike.usecases.common.AerospikeConnector;
-import com.aerospike.usecases.rtb.model.SegmentInstance;
-import com.aerospike.usecases.rtb.model.Device;
+import com.aerospike.usecases.model.Device;
+import com.aerospike.usecases.model.SegmentInstance;
 
 // Sample command lines:
 // -c generate --numDevices 100000 --numSegments 10000 -h localhost:3100
 // -c getSegments --device 1 -h localhost:3100   Show the ACTIVE segments for device 1 
+@Deprecated
 public class RealTimeBidding {
     private static void usage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
@@ -60,8 +61,7 @@ public class RealTimeBidding {
         String namespace = useCloud ? "aerospike_cloud" : "test";
         // Use a system property for the Object Mapper version
         System.setProperty("rtb.namespace", namespace);
-        StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper")
-                ? new ObjectMapperStorageEngine(client)
+        StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper") ? new ObjectMapperStorageEngine(client)
                 : new NativeStorageEngine(client, namespace);
         Log.info("Using " + storageEngine);
         return storageEngine;
