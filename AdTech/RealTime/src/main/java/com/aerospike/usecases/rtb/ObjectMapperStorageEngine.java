@@ -99,7 +99,7 @@ public class ObjectMapperStorageEngine implements StorageEngine {
             client.operate(null, userKey,
                     ListOperation.appendItems("lineitemIds",
                             lineitemIds.stream().map(com.aerospike.client.Value::get).collect(Collectors.toList())),
-                    Operation.put(new Bin("updatedAt", new Date().getTime())));
+                    Operation.put(new Bin("updatedAt", new Date().getTime() / 1000L)));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,7 +176,7 @@ public class ObjectMapperStorageEngine implements StorageEngine {
 
     @Override
     public Record getCountOfActiveAndExpiredSegments(String deviceId) {
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
         Record record = mapper.getClient().operate(mapper.getWritePolicy(Device.class), mapper.getRecordKey(deviceId),
                 ExpOperation.read("expired",
                         Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.nil(), Exp.val(Arrays.asList(now)),

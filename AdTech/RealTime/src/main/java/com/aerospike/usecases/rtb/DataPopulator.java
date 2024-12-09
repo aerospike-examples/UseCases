@@ -57,7 +57,7 @@ public class DataPopulator {
                     avgSegmentsPerDevice));
         }
         Random random = ThreadLocalRandom.current();
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
 
         for (long thisDeviceId = startDevice; thisDeviceId < endDevice; thisDeviceId++) {
             Device device = new Device(Device.idToString(thisDeviceId));

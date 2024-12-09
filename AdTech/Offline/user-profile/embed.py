@@ -3,13 +3,12 @@ import aerospike
 from profile import UserProfile
 
 def process_record(record): 
-    dict_record = dict(record[2])
-    id = dict_record['id']
-    demographics = dict_record['demographics']
-    interests = dict_record['interests']
-    location = dict_record['location']
+    # print(f"Record: {record[2]}")
     user_profile = UserProfile.from_aerospike_record(dict(record[2]))
-    print("UserProfile:", user_profile)
+    
+    embeddings_str = user_profile.embedding_string()
+    print(f"\nUserProfile id: {user_profile.id}")
+    print(f"-- Embeddings: {embeddings_str}")
 
 def scan_user_profiles():
     config = {

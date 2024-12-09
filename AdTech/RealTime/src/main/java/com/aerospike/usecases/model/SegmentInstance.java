@@ -26,7 +26,7 @@ public class SegmentInstance {
     private String partnerId;
 
     public SegmentInstance(long segmentId, String partnerId, long flags, int daysToKeep) {
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
         Date expiry = new Date(now + TimeUnit.DAYS.toMillis(daysToKeep));
         this.expiry = expiry;
         this.segmentId = segmentId;

@@ -79,23 +79,12 @@ java -jar target/RealTimeBidding-x.x.x.jar <command-line-options>
 
 ### To generate user profiles, campaigns and lineitems:
 ```
-java -jar target/RealTimeBidding-x.x.x.jar -c generate -h localhost:3000 -h localhost:3000
+java -jar target/DSP-x.x.x.jar -c generate -h localhost:3000 
 ```
 
-### To insert a segment into a device:
-```
-java -jar target/RealTimeBidding-x.x.x.jar -c insertSegment -h localhost:3000 -d 1 -s 123 -p www.example.com
-```
 
-### To retrieve active segments for a device:
-```
-java -jar target/RealTimeBidding-x.x.x.jar -c getSegments -h localhost:3000 -d 1
-```
 
-### To find out how many active and expired a segment has:
-```
-java -jar target/RealTimeBidding-x.x.x.jar -c showSegmentStats -h localhost:3000 -d 1
-```
+
 
 **Notes:**
 - The application assumes a default Aerospike server configuration. You might need to adjust connection parameters (like host address, port, username, and password) based on your Aerospike server's settings.

@@ -3,7 +3,7 @@
   <groupId>com.timf</groupId>
   <artifactId>DSP</artifactId>
   <version>0.1.1</version>
-  <name>Example workflow for ad-tech real-time bidding</name>
+  <name>Example DSP workflow for ad-tech real-time bidding</name>
   <description>A sample project designed to show how to implement the database portions of a real-time bidding workflow.</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,11 +16,6 @@
         <version>8.1.1</version>
     </dependency>
 
-     <!--dependency>
-        <groupId>com.aerospike</groupId>
-        <artifactId>aerospike-client</artifactId>
-        <version>8.0.0</version>
-    </dependency-->
   	<dependency>
 	    <groupId>com.googlecode.json-simple</groupId>
 	    <artifactId>json-simple</artifactId>
@@ -89,7 +84,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.aerospike.usecases.rtb.MockBidder</mainClass>
+							<mainClass>com.aerospike.usecases.rtb.MockDSP</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>

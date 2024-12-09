@@ -27,7 +27,7 @@ import java.util.Map;
  * <li>{@code incomeLevel} - The income level of the user.</li>
  * <li>{@code educationLevel} - The education level of the user.</li>
  * <li>{@code employmentStatus} - The employment status of the user.</li>
- * <li>{@code matitalStatus} - The marital status of the user.</li>
+ * <li>{@code maritalStatus} - The marital status of the user.</li>
  * </ul>
  * </p>
  * 
@@ -49,16 +49,16 @@ public class Demographics {
     private String incomeLevel;
     private String educationLevel;
     private String employmentStatus;
-    private String matitalStatus;
+    private String maritalStatus;
 
     public Demographics(Gender gender, String ageRange, String incomeLevel, String educationLevel,
-            String employmentStatus, String matitalStatus) {
+            String employmentStatus, String maritalStatus) {
         this.gender = gender;
         this.ageRange = ageRange;
         this.incomeLevel = incomeLevel;
         this.educationLevel = educationLevel;
         this.employmentStatus = employmentStatus;
-        this.matitalStatus = matitalStatus;
+        this.maritalStatus = maritalStatus;
     }
 
     public String getAgeRange() {
@@ -82,14 +82,14 @@ public class Demographics {
     }
 
     public String getMatitalStatus() {
-        return matitalStatus;
+        return maritalStatus;
     }
 
     @Override
     public String toString() {
         return "Demographics{" + "ageRange='" + ageRange + '\'' + ", gender=" + gender + ", incomeLevel='" + incomeLevel
                 + '\'' + ", educationLevel='" + educationLevel + '\'' + ", employmentStatus='" + employmentStatus + '\''
-                + ", matitalStatus='" + matitalStatus + '\'' + '}';
+                + ", maritalStatus='" + maritalStatus + '\'' + '}';
     }
 
     public Map<String, Object> asMap() {
@@ -100,7 +100,7 @@ public class Demographics {
         map.put("incomeLevel", incomeLevel);
         map.put("educationLevel", educationLevel);
         map.put("employmentStatus", employmentStatus);
-        map.put("matitalStatus", matitalStatus);
+        map.put("maritalStatus", maritalStatus);
         return map;
     }
 
@@ -110,8 +110,8 @@ public class Demographics {
         String incomeLevel = (String) map.get("incomeLevel");
         String educationLevel = (String) map.get("educationLevel");
         String employmentStatus = (String) map.get("employmentStatus");
-        String matitalStatus = (String) map.get("matitalStatus");
-        return new Demographics(gender, ageRange, incomeLevel, educationLevel, employmentStatus, matitalStatus);
+        String maritalStatus = (String) map.get("maritalStatus");
+        return new Demographics(gender, ageRange, incomeLevel, educationLevel, employmentStatus, maritalStatus);
     }
 
 }

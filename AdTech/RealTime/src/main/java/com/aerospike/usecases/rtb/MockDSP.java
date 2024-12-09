@@ -19,7 +19,7 @@ import com.aerospike.usecases.model.bid.BidResponse;
 // Sample command lines:
 // -c generate -h localhost:3100
 // -c bidder -h localhost:3100 
-public class MocDSP {
+public class MockDSP {
 
     private static final long USER_START = 1000;
     private static final long USER_TOTAL = 50000;
@@ -29,7 +29,7 @@ public class MocDSP {
         HelpFormatter formatter = new HelpFormatter();
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        String syntax = MocDSP.class.getName() + " [<options>]";
+        String syntax = MockDSP.class.getName() + " [<options>]";
         formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
         System.out.println(sw.toString());
         System.exit(1);

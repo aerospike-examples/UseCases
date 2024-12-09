@@ -91,7 +91,7 @@ public class NativeStorageEngine implements StorageEngine {
         data.add(segment.getExpiry() == null ? 0 : segment.getExpiry().getTime());
         data.add(segment.getFlags());
         data.add(segment.getPartnerId());
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
 
         client.operate(writePolicy, getDeviceKey(deviceId),
                 MapOperation.removeByValueRange(SEGMENT_NAME, Value.get(Arrays.asList(0)),
@@ -119,7 +119,7 @@ public class NativeStorageEngine implements StorageEngine {
     @SuppressWarnings("unchecked")
     @Override
     public List<SegmentInstance> getActiveSegments(String deviceId) {
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
         Record record = client.operate(writePolicy, getDeviceKey(deviceId), MapOperation.getByValueRange(SEGMENT_NAME,
                 Value.get(Arrays.asList(now)), Value.INFINITY, MapReturnType.KEY_VALUE));
 
@@ -142,7 +142,7 @@ public class NativeStorageEngine implements StorageEngine {
      * @return
      */
     public List<Long> getActiveSegmentIds(String deviceId) {
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
         Record record = client.operate(writePolicy, getDeviceKey(deviceId), MapOperation.getByValueRange(SEGMENT_NAME,
                 Value.get(Arrays.asList(now)), Value.INFINITY, MapReturnType.KEY));
         System.out.println(record);
@@ -151,7 +151,7 @@ public class NativeStorageEngine implements StorageEngine {
 
     @Override
     public Record getCountOfActiveAndExpiredSegments(String deviceId) {
-        long now = new Date().getTime();
+        long now = new Date().getTime() / 1000L;
         Record record = client.operate(writePolicy, getDeviceKey(deviceId),
                 ExpOperation.read("expired",
                         Exp.build(MapExp.getByValueRange(MapReturnType.COUNT, Exp.nil(), Exp.val(Arrays.asList(now)),
@@ -172,7 +172,8 @@ public class NativeStorageEngine implements StorageEngine {
     @Override
     public void saveUser(UserProfile user) {
         Bin[] bins = new Bin[] { new Bin("id", user.getId()), new Bin("createdAt", user.getCreatedAt().getTime()),
-                new Bin("updatedAt", new Date().getTime()), new Bin("demographics", user.getDemographics().asMap()),
+                new Bin("updatedAt", new Date().getTime() / 1000L),
+                new Bin("demographics", user.getDemographics().asMap()),
                 new Bin("location", user.getLocation().asMap()), new Bin("interests", user.getInterests()),
                 new Bin("activity", user.getActivity().stream().map(ActivityEvent::asMap).collect(Collectors.toList())),
                 new Bin("purchases", user.getPurchases().stream().map(Purchase::asMap).collect(Collectors.toList())),
