@@ -114,12 +114,10 @@ public class MockDSP {
                     BidRequest bidRequest = RandomData.randomBidRequest(USER_START, USER_TOTAL + USER_START);
                     // process the bid request
                     BidResponse bidResponse = mockBidder.processBidRequest(bidRequest);
-                    if (bidResponse == null) {
-                        Log.info("No bid response for bid request: " + bidRequest.getId());
-                        continue;
-                    }
+                    String responseId = (bidResponse != null) ? bidResponse.getId() : "No bid";
+
                     // Print the bid request and response IDs
-                    Log.info("Bid request: " + bidRequest.getId() + " Bid response: " + bidResponse.getId());
+                    Log.info("Bid request: " + bidRequest.getId() + " Bid response: " + responseId);
 
                 }
             }

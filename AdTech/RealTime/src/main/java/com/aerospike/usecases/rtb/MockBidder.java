@@ -38,13 +38,11 @@ public class MockBidder {
         // Match bid request to a user profile
         UserProfile userProfile = matchBidResuestToUserProfile(bidRequest);
         if (userProfile == null) {
-            System.out.println("No user profile found therefore no bid");
             return null;
         }
         // Find up to 20 active line items for this user
         List<Lineitem> activeLineitems = this.storageEngine.activeLineitems(userProfile.getLineitemIds());
         if (activeLineitems.size() == 0) {
-            System.out.println("No active line items found therefore no bid");
             return null;
         }
         // Select the best line item for this bid request (randomly selected in this
