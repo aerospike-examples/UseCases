@@ -29,7 +29,7 @@ interconnect:
 # Target Aerospike cluster
 aerospike:
   seeds:
-    - core:
+    - usecases-core:
         port: 3000
 
 # File based credentials store only if security should be enabled.

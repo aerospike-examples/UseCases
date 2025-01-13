@@ -1,5 +1,15 @@
-transformers
-pandas
+# Aerospike dependencies
+aerospike-vector-search
+aerospike
+
+# Vector dependencies
 torch
-sqlalchemy
-sqlite3
+torchvision
+torchaudio
+openai
+groq
+google-cloud-aiplatform
+transformers
+
+# testing
+faker

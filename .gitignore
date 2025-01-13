@@ -8,6 +8,7 @@ data/aerospike/*.dat
 # feature configuration
 config/aerospike/features.conf
 config/vector/features.conf
+config/graph/features.conf
 
 # Log file
 *.log

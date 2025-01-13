@@ -1,7 +1,7 @@
 services:
   usecases-core:
     image: aerospike/aerospike-server-enterprise:latest
-    container_name: core-usecases
+    container_name: usecases-core
     command: --config-file /etc/aerospike/aerospike.conf
     ports:
       - 3000:3000
@@ -18,16 +18,27 @@ services:
 
   usecases-vector:
     image: aerospike/aerospike-vector-search:0.11.1
-    container_name: vector-usecases
+    container_name: usecases-vector
     volumes:
       - ${PWD}/config/vector:/etc/aerospike-vector-search
     depends_on:
       usecases-core:
         condition: service_healthy
+    networks:
+      - usecases
     ports:
       - 5500:5500
       - 5040:5040
       - 5001:5001
+
+  usecases-graph:
+    image: aerospike/aerospike-graph-service:latest
+    container_name: usecases-graph
+    volumes:
+      - ${PWD}/config/graph/aerospike-graph.properties:/opt/aerospike-graph/aerospike-graph.properties
+    depends_on:
+      usecases-core:
+        condition: service_healthy
     networks:
       - usecases
 

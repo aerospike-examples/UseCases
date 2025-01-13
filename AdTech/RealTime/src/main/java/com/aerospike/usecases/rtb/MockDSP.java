@@ -72,9 +72,11 @@ public class MockDSP {
         Log.setCallbackStandard();
         AerospikeConnector connector = new AerospikeConnector();
         Options options = connector.getOptions();
+
         options.addRequiredOption("c", "command", true, "The commnad to execute. Valid commands are:"
-                + "\t generate -- take the numDevices, numSegments options and optionally the algorithm and numThreads and generate the required number of devices\n"
-                + "\t bidder -- run a bidder simulator, data byst be generate before the bidder sumilator is run\n");
+                + String.format("\t generate -- Generate %d user profiles and %d campaigns\n", USER_TOTAL,
+                        CAMPAIGNS_TOTAL)
+                + "\t bidder -- run a bidder simulator, data must be generate before the bidder sumilator is run\n");
         options.addOption("alg", "algorithm", true,
                 "Use 'native' (default) for raw Aerospike code or 'mapper' to use the Java Object Mapper. All options which used the database can take this option");
         if (args.length == 0) {
@@ -92,9 +94,8 @@ public class MockDSP {
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
                 MockDataGenerator populator = new MockDataGenerator(storageEngine);
-                TimingMetric timer = new TimingMetric("data-timer", "");
-                populator.generateUsers(timer, USER_START, USER_TOTAL + USER_START);
-                populator.generateCampaignsAndLineitems(timer, CAMPAIGNS_TOTAL, USER_START, USER_TOTAL + USER_START);
+                populator.generateUsers(USER_START, USER_TOTAL + USER_START);
+                populator.generateCampaignsAndLineitems(CAMPAIGNS_TOTAL, USER_START, USER_TOTAL + USER_START);
             }
             break;
 

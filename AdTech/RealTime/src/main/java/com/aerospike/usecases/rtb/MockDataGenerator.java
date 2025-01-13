@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Log;
 import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
+import com.aerospike.usecases.common.MonitorService;
 import com.aerospike.usecases.model.Campaign;
 import com.aerospike.usecases.model.Creative;
 import com.aerospike.usecases.model.Lineitem;
@@ -20,16 +20,19 @@ public class MockDataGenerator {
         this.storageEngine = storageEngine;
     }
 
-    public void generateCampaignsAndLineitems(TimingMetric timer, long numberofCampaigns, long startUser,
-            long endUser) {
+    public void generateCampaignsAndLineitems(long numberofCampaigns, long startUser, long endUser) {
         if (Log.debugEnabled()) {
             Log.debug(String.format("generateCampaignsAndLineitems(%d)\n", numberofCampaigns));
         }
         Log.info("Generate Campaigns and Lineitems");
         Log.info("Assigning a random number of lineitems to 50 random users ...");
+        TimingMetric timer = new TimingMetric("Campaign and Lineitem timer",
+                "Metrics for Campaign and Lineitem generation");
+        MonitorService monitor = new MonitorService(timer);
         long lineitemsCreated = 0;
         long campaignsCreated = 0;
         long createivesCreated = 0;
+        monitor.startMonitoring();
         for (long thisCampaign = 0; thisCampaign < numberofCampaigns; thisCampaign++) {
             try {
                 // generate a random campaign
@@ -67,6 +70,7 @@ public class MockDataGenerator {
                         String randomUserId = String
                                 .valueOf(ThreadLocalRandom.current().nextLong(startUser, endUser + 1));
                         if (!this.storageEngine.userExists(randomUserId)) {
+
                             // user does not exist, skip
                             continue;
                         }
@@ -80,6 +84,7 @@ public class MockDataGenerator {
                         }
                         // assign the lineitems to the user
                         this.storageEngine.assignLineitemsToUser(randomUserId, lineitemsToAssign);
+                        timer.addTime(System.nanoTime() - startTime);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -91,23 +96,27 @@ public class MockDataGenerator {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (campaignsCreated % 1000 == 0) {
-                    Log.info("... generated " + campaignsCreated + " campaigns");
-                }
+                // } finally {
+                // if (campaignsCreated % 1000 == 0) {
+                // Log.info("... generated " + campaignsCreated + " campaigns");
+                // }
 
             }
         }
+        monitor.endMonitoring();
+        System.out.flush();
         Log.info("Total generated " + numberofCampaigns + " campaigns");
         Log.info("Total generated " + lineitemsCreated + " lineitems");
         Log.info("Total generated " + createivesCreated + " creatives");
     }
 
-    public void generateUsers(TimingMetric timer, long startUser, long endUser) {
+    public void generateUsers(long startUser, long endUser) {
         if (Log.debugEnabled()) {
             Log.debug(String.format("    generateUsers( %d, %d)\n", startUser, endUser));
         }
         Log.info("Generating user profiles ...");
+        TimingMetric timer = new TimingMetric("User profile timer", "Metrics for user profile generation");
+        MonitorService monitor = new MonitorService(timer);
         for (long thisUserProfileId = startUser; thisUserProfileId < endUser; thisUserProfileId++) {
 
             List<String> interests = RandomData.randomInterests();

@@ -18,7 +18,7 @@ git clone ​​https://github.com/aerospike-examples/UseCases.git
 ### Build the Project
 Open a terminal or command prompt and navigate to the root directory of the cloned repository.
 ```
-cd UseCases/RealTimeBidding
+cd UseCases/AdTech/RealTime
 ```
 
 ### Build the project
@@ -29,7 +29,7 @@ mvn clean package
 This command will download necessary dependencies, compile the code, and package the application into a JAR file.
 
 ### Configure Aerospike  
-If you haven't already, start an Aerospike server. There are 2 supported ways of doing this: Using native Aerospike, or using Aerospike Cloud.
+If you haven't already, start an Aerospike server. There are 2 supported ways of doing this: Using native Aerospike or using Aerospike Cloud.
 
 #### Using native Aerospike
 Define a namespace in your application configuration. The code uses `rtb` as a default namespace. You can modify this in these classes:
@@ -89,7 +89,7 @@ java -jar target/DSP-x.x.x.jar -c generate -h localhost:3000
 **Notes:**
 - The application assumes a default Aerospike server configuration. You might need to adjust connection parameters (like host address, port, username, and password) based on your Aerospike server's settings.
 
-- The application utilizes a default namespace ("test") for storing data. If you're using a different namespace, update the code accordingly.
+- The application utilizes the namespace ("rtb") for storing data. If you're using a different namespace, update the code accordingly.
 
 - The code includes a `TlsOptions` class for enabling TLS/SSL connections to the Aerospike cluster. Refer to the documentation for configuring TLS settings.
 
