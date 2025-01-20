@@ -77,16 +77,38 @@ java -jar target/RealTimeBidding-x.x.x.jar <command-line-options>
     
 ## Example Command-Line Usage:
 
-### To generate user profiles, campaigns and lineitems:
+*Note:* generate mock data before running the bidder simulator
+
+### 1. To generate user profiles, campaigns and lineitems:
 ```
 java -jar target/DSP-x.x.x.jar -c generate -h localhost:3000 
 ```
 
+This command will generate: 
+- 50,000 users
+- 1,000 campaigns
+- 5 to 50 linitems per compaign
+- 1 creative per lineitem
+
+additionally, each linitem is connected to one or more users by storing the lineitem ID in list in the user.
 
 
+### 2. Bidder simulator
+
+The bidder simulates receiving 1000 bid requests and returning a bid responses by retrieving the user profile and active lineitems from Aerospoke. It uses the Aerospike storage operations:
+
+- Get (read) to retrive the user profile and a list of lineitem IDs
+- Batch Get (read) to retrieve the user's lineitems with a filter for 'active' lineitems.
+
+## Typical commands for generate the simulate
+```
+java -jar target/DSP-x.x.x.jar -c generate -h localhost:3000 
+java -jar target/DSP-x.x.x.jar -c bidder -h localhost:3000 
+
+```
 
 
-**Notes:**
+#Notes#
 - The application assumes a default Aerospike server configuration. You might need to adjust connection parameters (like host address, port, username, and password) based on your Aerospike server's settings.
 
 - The application utilizes the namespace ("rtb") for storing data. If you're using a different namespace, update the code accordingly.
@@ -99,85 +121,3 @@ The [Java Object Mapper](https://github.com/aerospike/java-object-mapper) can al
 <p/>
 At runtime, the `-alg` parameter controls which engine is used, omit this parameter or pass it the value of `native` for the native client implementation, or pass `-alg mapper` to use the object mapper. Both algorithms produce exactly the same data, so data could be inserted using the mapper and retrieved using the native client for example. 
 
-By following these steps, you should be able to successfully install and set up the real-time bidding application on your system and experiment with its features.
-
-### For example:
-1. Generate 1,000 devices, with an average of 100 segments per device (the default). The segment pool is 10,000 segments:
-```
-% java -jar target/RealTimeBiddingSample-0.1.0-full.jar -h localhost:3100 -c generate -nS 10000 -nD 1000
-2024-06-17 20:26:44 MDT INFO Add node BB995D0B65D55A2 127.0.0.1 3100
-2024-06-17 20:26:44 MDT INFO Cluster: name: null, hosts: [localhost 3100] user: null, password: null
-         authMode: INTERNAL, tlsPolicy: null
-
-2024-06-17 20:26:44 MDT INFO Using NativeStorageEngine
-    0ms: Avg latency: 0us, iterations: 1, last latency: 0us, last iterations: 0
-Run complete:
-	1,082ms: Avg latency: 2,296us, iterations: 1,000, last latency: 2,298us, last iterations: 999
-```
-
-2. See how many active and expired segments device 1 has. Note that Strings are commonly used as device ids, but it’s easier to enter a number. So the program will map the number to a corresponding string:
-```
-% java -jar target/RealTimeBiddingSample-0.1.0-full.jar -h localhost:3100 -c showSegmentStats -d 1
-2024-06-17 20:33:59 MDT INFO Add node BB995D0B65D55A2 127.0.0.1 3100
-2024-06-17 20:33:59 MDT INFO Cluster: name: null, hosts: [localhost 3100] user: null, password: null
-         authMode: INTERNAL, tlsPolicy: null
-
-2024-06-17 20:33:59 MDT INFO Using NativeStorageEngine
-Device id 73dacfc7-cd3a-2620-8c43-000000000001 has 246 active segments and 21 expired segments
-```
-
-3. Retrieve all the active segments.
-```
-% java -jar target/RealTimeBiddingSample-0.1.0-full.jar -h localhost:3100 -c getSegments -d 1
-2024-06-17 20:35:26 MDT INFO Add node BB995D0B65D55A2 127.0.0.1 3100
-2024-06-17 20:35:26 MDT INFO Cluster: name: null, hosts: [localhost 3100] user: null, password: null
-         authMode: INTERNAL, tlsPolicy: null
-
-2024-06-17 20:35:26 MDT INFO Using NativeStorageEngine
-1: SegmentInstance(segmentId=5, expiry=Fri Jun 21 20:53:46 MDT 2024, flags=0, partnerId=www.google.com)
-2: SegmentInstance(segmentId=6, expiry=Mon Jul 01 03:44:48 MDT 2024, flags=0, partnerId=www.google.com)
-...
-245: SegmentInstance(segmentId=9758, expiry=Mon Jul 15 11:17:03 MDT 2024, flags=0, partnerId=www.google.com)
-246: SegmentInstance(segmentId=9852, expiry=Mon Jul 08 08:24:43 MDT 2024, flags=0, partnerId=www.google.com)
-```
-
-4. Insert a new segment into this device and remove all expired segments:
-```
-% java -jar target/RealTimeBiddingSample-0.1.0-full.jar -h localhost:3100 -c insertSegment -d 1 -segment 12345 -partner 'www.aerospike.com'
-2024-06-17 20:47:37 MDT INFO Add node BB995D0B65D55A2 127.0.0.1 3100
-2024-06-17 20:47:37 MDT INFO Cluster: name: null, hosts: [localhost 3100] user: null, password: null
-         authMode: INTERNAL, tlsPolicy: null
-
-2024-06-17 20:47:37 MDT INFO Using NativeStorageEngine
-Successfully inserted
-```
-
-6. Check the number of segments again, it is expected that the expired segments are 0 as the insert method removes all expired segments.
-```
-% java -jar target/RealTimeBiddingSample-0.1.0-full.jar -h localhost:3100 -c showSegmentStats -d 1
-2024-06-17 20:47:46 MDT INFO Add node BB995D0B65D55A2 127.0.0.1 3100
-2024-06-17 20:47:47 MDT INFO Cluster: name: null, hosts: [localhost 3100] user: null, password: null
-         authMode: INTERNAL, tlsPolicy: null
-
-2024-06-17 20:47:47 MDT INFO Using NativeStorageEngine
-Device id 73dacfc7-cd3a-2620-8c43-000000000001 has 247 active segments and 0 expired segments
-```
-
-6. View the segments again, this time using the Java Object Mapper
-```
-% java -jar target/RealTimeBiddingSample-0.1.0-full.jar -h localhost:3100 -c getSegments -d 1 -alg mapper
-2024-06-17 20:53:49 MDT INFO Add node BB995D0B65D55A2 127.0.0.1 3100
-2024-06-17 20:53:49 MDT INFO Cluster: name: null, hosts: [localhost 3100] user: null, password: null
-         authMode: INTERNAL, tlsPolicy: null
-
-2024-06-17 20:53:49 MDT INFO Using ObjectMapperStorageEngine
-1: SegmentInstance(segmentId=5, expiry=Fri Jun 21 20:53:46 MDT 2024, flags=0, partnerId=www.google.com)
-2: SegmentInstance(segmentId=6, expiry=Mon Jul 01 03:44:48 MDT 2024, flags=0, partnerId=www.google.com)
-...
-244: SegmentInstance(segmentId=9747, expiry=Thu Jul 11 18:04:33 MDT 2024, flags=0, partnerId=www.google.com)
-245: SegmentInstance(segmentId=9758, expiry=Mon Jul 15 11:17:03 MDT 2024, flags=0, partnerId=www.google.com)
-246: SegmentInstance(segmentId=9852, expiry=Mon Jul 08 08:24:43 MDT 2024, flags=0, partnerId=www.google.com)
-247: SegmentInstance(segmentId=12345, expiry=Wed Jul 17 20:47:37 MDT 2024, flags=1, partnerId=www.aerospike.com)
-```
-
-Notice this last example has the segment that was inserted, and is using the Java Object Mapper.

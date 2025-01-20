@@ -12,7 +12,6 @@ import org.apache.commons.cli.Options;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Log;
 import com.aerospike.usecases.common.AerospikeConnector;
-import com.aerospike.usecases.common.MonitorMetric.TimingMetric;
 import com.aerospike.usecases.model.bid.BidRequest;
 import com.aerospike.usecases.model.bid.BidResponse;
 
