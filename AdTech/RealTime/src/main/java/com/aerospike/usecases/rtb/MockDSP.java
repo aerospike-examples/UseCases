@@ -122,6 +122,29 @@ public class MockDSP {
             }
             break;
 
+        case "lineitems":
+            checkRequiredParameters(cl, options, command.toLowerCase());
+            checkConnectionOptions(connector, cl, options);
+            try (IAerospikeClient client = connector.connect()) {
+                StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
+                MockBidder mockBidder = new MockBidder(storageEngine);
+                mockBidder.randomLineitemStatusByUsers(USER_START, USER_TOTAL + USER_START);
+
+            }
+            break;
+
+        case "queries":
+            checkRequiredParameters(cl, options, command.toLowerCase());
+            checkConnectionOptions(connector, cl, options);
+            try (IAerospikeClient client = connector.connect()) {
+                StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
+
+                storageEngine.queryUsersByInterest();
+                storageEngine.queryUsersByLocation();
+                storageEngine.queryUsersByCreatedDate();
+            }
+            break;
+
         default:
             System.out.printf("Unknown command: \"%s\"\n", command.toLowerCase());
             usage(options);

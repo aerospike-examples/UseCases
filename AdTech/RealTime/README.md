@@ -55,7 +55,7 @@ Gather the Database Hostname (which should end in “`.asdb.io`”), the API Key
 Note that the namespace used on Aerospike Cloud by default is `aerospike_cloud`
 
 
-### Run the Application
+### Run the RealTime Application
 After building the project, you can run the application using the following command:
 
 ```

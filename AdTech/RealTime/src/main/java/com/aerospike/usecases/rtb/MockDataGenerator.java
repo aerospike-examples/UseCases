@@ -133,6 +133,10 @@ public class MockDataGenerator {
             }
         }
         Log.info("... generated " + (endUser - startUser) + " user profiles");
+        Log.info("Creating secondary indexes for user profiles");
+        this.storageEngine.createSecondaryIndexes();
+        Log.info("... completed secondary indexes");
+
     }
 
     // testing only

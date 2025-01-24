@@ -1,9 +1,11 @@
 package com.aerospike.usecases.rtb;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.usecases.model.Lineitem;
 import com.aerospike.usecases.model.UserProfile;
 import com.aerospike.usecases.model.bid.BidRequest;
@@ -52,6 +54,43 @@ public class MockBidder {
         BidResponse bidResponse = RandomData.randomBidResponse(bidRequest, selectedLineitem);
 
         return bidResponse;
+    }
+
+    /**
+     * Updates the status of line items for users within a specified range.
+     *
+     * @param userStart the starting user ID (inclusive)
+     * @param endUser   the ending user ID (exclusive)
+     * @throws UnsupportedOperationException if the method is not fully implemented
+     */
+    public void randomLineitemStatusByUsers(long userStart, long endUser) {
+
+        for (long userId = userStart; userId < endUser; userId++) {
+            try {
+                if (!this.storageEngine.userExists(String.valueOf(userId))) {
+                    // user does not exist, skip
+                    continue;
+                }
+                // Find user profile
+                UserProfile userProfile = this.storageEngine.fetchUser(String.valueOf(userId));
+                // Find items for this user
+                List<Lineitem> lineitems = this.storageEngine.activeLineitems(userProfile.getLineitemIds());
+
+                for (Lineitem lineitem : lineitems) {
+                    // randomly update the status of the line item
+                    lineitem.setStatus(RandomData.randomLineitemStatus());
+
+                }
+                // Update the line items
+                this.storageEngine.updateLineitemStatus(lineitems);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }
+
+        throw new UnsupportedOperationException("Unimplemented method 'randomLineitemStatusByUsers'");
     }
 
     // testing only

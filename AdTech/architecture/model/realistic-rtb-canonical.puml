@@ -8,12 +8,59 @@ hide circle
 
 hide empty members
 
-class Profile {
-    - String id
-    - List<Lineitem> lineitems
-    - boolean isFinished
+hide Segment
+hide Demographics
+hide Location
+hide Creative
+hide Advertiser
+hide ActivityEvent
+hide Purchase
 
+class UserProfile {
+  - String id
+  - Date createdAt
+  - Date updatedAt
+  - Demographics demographics
+  - List<String> interests
+  - Location location
+  - List<ActivityEvent> activity
+  - List<Purchase> purchases
+  - List<String> lineitemIds
+  - List<String> AudienceIds
 }
+
+class Demographics {
+  +String ageRange
+  +String gender
+  +String location
+  ...etc
+}
+
+class Location {
+  +String city
+  +String state
+  +String country
+  ...etc
+}
+
+class ActivityEvent {
+  +String url
+  +Date timestamp
+  ...etc
+}
+
+class Purchase {
+  +String itemId
+  +Date purchaseDate
+  +float amount
+  ...etc
+}
+
+UserProfile "1" -- "1" Demographics
+UserProfile "1" -- "1" Location
+UserProfile "1" -- "1..*" ActivityEvent : activity
+UserProfile "1" -- "1..*" Purchase : purchases
+
 
 enum LineitemStatus {
     DRAFT
@@ -25,7 +72,7 @@ enum LineitemStatus {
 class Campaign {
     - String id
     - String name
-    - List<Lineitem> lineitems
+    - List<String> lineitemIds
     - Float budget
     - DateTime startDate
     - DateTime endDate
@@ -75,14 +122,16 @@ class Creative {
     - String type
 }
 
-Campaign "*" <--> "1..*" Lineitem : lineitems
+Campaign "*" <..> "1..*" Lineitem : lineitems
 Advertiser "1" <-> "*" Campaign : campaigns
 Advertiser "*" --> "1..*" Creative : creatives
 Creative "*" <- "*" Lineitem : creatives
-Lineitem "*" -> "1" Audience : audience
-LineitemStatus -- Lineitem
-Lineitem "1..20" -- "*" Profile
+Lineitem "*" <..> "1" Audience : audience
+LineitemStatus - Lineitem
+Lineitem "1..50" .. "*" UserProfile
 Audience "*" -> "1..*" Segment : segments
+Audience "*" <.. "1..*" UserProfile
+
 
 
 @enduml

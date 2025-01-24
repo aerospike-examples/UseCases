@@ -3,6 +3,8 @@ package com.aerospike.usecases.rtb;
 import java.util.List;
 
 import com.aerospike.client.Record;
+import com.aerospike.client.query.IndexCollectionType;
+import com.aerospike.client.query.IndexType;
 import com.aerospike.usecases.model.Campaign;
 import com.aerospike.usecases.model.Creative;
 import com.aerospike.usecases.model.Device;
@@ -28,6 +30,13 @@ public interface StorageEngine {
     void saveUser(UserProfile user);
 
     /**
+     * Deletes users from the storage engine based on the provided list of user IDs.
+     *
+     * @param userIds A list of user IDs to be deleted.
+     */
+    void deleteUsers(List<String> userIds);
+
+    /**
      * Save a single lineitem
      * 
      * @param lineitem
@@ -40,6 +49,13 @@ public interface StorageEngine {
      * @param lineitems
      */
     void saveLineitems(List<Lineitem> lineitems);
+
+    /**
+     * Updates the given list of line items in the storage engine.
+     *
+     * @param lineitems the list of Lineitem objects to be updated
+     */
+    void updateLineitemStatus(List<Lineitem> lineitems);
 
     /**
      * Save a campaign
@@ -86,5 +102,36 @@ public interface StorageEngine {
      * @param lineitems the list of line items to be assigned to the user
      */
     public void assignLineitemsToUser(String userId, List<Lineitem> lineitems);
+
+    /**
+     * Creates secondary indexes for the storage engine. This method is responsible
+     * for setting up any necessary secondary indexes that are required for
+     * efficient querying and data retrieval. The implementation details of this
+     * method should ensure that the indexes are created in a way that optimizes
+     * performance and supports the use cases of the application.
+     */
+    public void createSecondaryIndexes();
+
+    /**
+     * Queries users based on their interests. This method is intended to retrieve
+     * user data filtered by specific interest criteria. The implementation details
+     * should define how the interest-based filtering is performed.
+     */
+    public void queryUsersByInterest();
+
+    /**
+     * Queries users based on their created date. This method retrieves users who
+     * were created on a specific date. The implementation details should specify
+     * the date format and any other relevant parameters required for the query.
+     */
+    public void queryUsersByCreatedDate();
+
+    /**
+     * Queries users based on their location. This method is intended to retrieve
+     * user data filtered by geographic location. The specific implementation
+     * details and parameters required for the query should be defined in the
+     * implementing class.
+     */
+    public void queryUsersByLocation();
 
 }

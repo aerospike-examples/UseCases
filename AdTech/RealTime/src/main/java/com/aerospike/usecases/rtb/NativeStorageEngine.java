@@ -3,30 +3,51 @@ package com.aerospike.usecases.rtb;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.aerospike.client.AerospikeException;
+import com.aerospike.client.BatchDelete;
+import com.aerospike.client.BatchRead;
+import com.aerospike.client.BatchRecord;
+import com.aerospike.client.BatchResults;
+import com.aerospike.client.BatchWrite;
 import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
+import com.aerospike.client.Log;
 import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
+import com.aerospike.client.ResultCode;
 import com.aerospike.client.Value;
 import com.aerospike.client.cdt.ListOperation;
+import com.aerospike.client.cdt.ListPolicy;
+import com.aerospike.client.cdt.ListReturnType;
 import com.aerospike.client.cdt.MapOperation;
 import com.aerospike.client.cdt.MapOrder;
 import com.aerospike.client.cdt.MapPolicy;
 import com.aerospike.client.cdt.MapReturnType;
 import com.aerospike.client.cdt.MapWriteFlags;
+import com.aerospike.client.command.Batch;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.exp.ExpOperation;
+import com.aerospike.client.exp.ExpReadFlags;
+import com.aerospike.client.exp.ExpWriteFlags;
 import com.aerospike.client.exp.Expression;
 import com.aerospike.client.exp.MapExp;
 import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.WritePolicy;
+import com.aerospike.client.query.Filter;
+import com.aerospike.client.query.IndexCollectionType;
+import com.aerospike.client.query.IndexType;
+import com.aerospike.client.query.KeyRecord;
+import com.aerospike.client.query.RecordSet;
+import com.aerospike.client.query.Statement;
+import com.aerospike.client.task.IndexTask;
 import com.aerospike.usecases.model.ActivityEvent;
 import com.aerospike.usecases.model.Audience;
 import com.aerospike.usecases.model.Campaign;
@@ -134,6 +155,62 @@ public class NativeStorageEngine implements StorageEngine {
     }
 
     /**
+     * Creates a secondary index on a specified bin within a set in the given
+     * namespace. If the index already exists, the exception is caught and ignored.
+     *
+     * @param namespace the namespace in which the index is to be created
+     * @param set       the set within the namespace where the index is to be
+     *                  created
+     * @param indexName the name of the index to be created
+     * @param binName   the name of the bin on which the index is to be created
+     * @param indexType the type of the index to be created (e.g., numeric, string)
+     * @throws AerospikeException if an error occurs during index creation, except
+     *                            when the index already exists
+     */
+    public void createIndex(String namespace, String set, String indexName, String binName, IndexType indexType) {
+        // Create a secondary index on the bin that you want to query
+
+        try {
+            IndexTask task = client.createIndex(null, namespace, set, indexName, binName, indexType);
+            task.waitTillComplete();
+        } catch (AerospikeException ae) {
+            // If the index already exists, ignore the exception
+            if (ae.getResultCode() != ResultCode.INDEX_ALREADY_EXISTS) {
+                throw ae;
+            }
+        }
+    }
+
+    /**
+     * Creates a secondary index on the specified bin within a given namespace and
+     * set.
+     *
+     * @param namespace The namespace in which the index will be created.
+     * @param set       The set within the namespace where the index will be
+     *                  created.
+     * @param indexName The name of the index to be created.
+     * @param binName   The name of the bin on which the index will be created.
+     * @param indexType The type of the index to be created (e.g., numeric, string).
+     * @throws AerospikeException If an error occurs during index creation, except
+     *                            when the index already exists.
+     */
+    private void createIndex(String namespace, String set, String indexName, String binName, IndexType indexType,
+            IndexCollectionType indexCollectionType) {
+        // Create a secondary index on the bin that you want to query
+
+        try {
+            IndexTask task = client.createIndex(null, namespace, set, indexName, binName, indexType,
+                    indexCollectionType);
+            task.waitTillComplete();
+        } catch (AerospikeException ae) {
+            // If the index already exists, ignore the exception
+            if (ae.getResultCode() != ResultCode.INDEX_ALREADY_EXISTS) {
+                throw ae;
+            }
+        }
+    }
+
+    /**
      * Return a list of just the device ids instead of the whole segements. This is
      * shown here as an example of what can be achieved with the lower level
      * interface.
@@ -141,7 +218,7 @@ public class NativeStorageEngine implements StorageEngine {
      * @param deviceId
      * @return
      */
-    public List<Long> getActiveSegmentIds(String deviceId) {
+    private List<Long> getActiveSegmentIds(String deviceId) {
         long now = new Date().getTime() / 1000L;
         Record record = client.operate(writePolicy, getDeviceKey(deviceId), MapOperation.getByValueRange(SEGMENT_NAME,
                 Value.get(Arrays.asList(now)), Value.INFINITY, MapReturnType.KEY));
@@ -319,6 +396,167 @@ public class NativeStorageEngine implements StorageEngine {
                 ListOperation.appendItems("lineitemIds",
                         lineitemIds.stream().map(com.aerospike.client.Value::get).collect(Collectors.toList())),
                 Operation.put(new Bin("updatedAt", new Date().getTime())));
+    }
+
+    @Override
+    public void updateLineitemStatus(List<Lineitem> lineitems) {
+        List<BatchRecord> records = new ArrayList<BatchRecord>();
+        BatchPolicy batchPolicy = new BatchPolicy();
+
+        for (Lineitem lineitem : lineitems) {
+            // Create a key for the line item
+            Key key = new Key(NAMESPACE, "lineitems", lineitem.getId());
+            // Update status and updatedAt
+            Operation[] ops = Operation.array(Operation.put(new Bin("status", lineitem.getStatus().toString())),
+                    Operation.put(new Bin("updatedAt", new Date().getTime())));
+
+            records.add(new BatchWrite(key, ops));
+        }
+        // Execute batch.
+        client.operate(batchPolicy, records);
+    }
+
+    @Override
+    public void deleteUsers(List<String> userIds) {
+        BatchPolicy batchPolicy = new BatchPolicy();
+        List<BatchRecord> records = new ArrayList<BatchRecord>();
+        for (String userId : userIds) {
+            // Create a key for the user profile
+            Key key = new Key(NAMESPACE, "profiles", userId);
+            // Add a batch delete operation for the key
+            records.add(new BatchDelete(key));
+        }
+        // Execute batch.
+        client.operate(batchPolicy, records);
+    }
+
+    /**
+     * Creates secondary indexes for the "profiles" set in the Aerospike database.
+     * 
+     * This method creates the following indexes: 1. A numeric index on the
+     * "createdAt" field, named "creation_index". 2. A string index on the
+     * "interests" field (which is a list), named "interests_index". 3. A string
+     * index on the "location" field (which is a map value), named "location_index".
+     */
+    @Override
+    public void createSecondaryIndexes() {
+        // Created date index
+        this.createIndex(NAMESPACE, "profiles", "creation_index", "createdAt", IndexType.NUMERIC);
+        // Interests index
+        this.createIndex(NAMESPACE, "profiles", "interests_index", "interests", IndexType.STRING,
+                IndexCollectionType.LIST);
+        // Location index
+        this.createIndex(NAMESPACE, "profiles", "location_index", "location", IndexType.STRING,
+                IndexCollectionType.MAPVALUES);
+    }
+
+    /**
+     * Queries users by a specific interest from the Aerospike database.
+     * 
+     * This method creates a statement to query the "profiles" set in the specified
+     * namespace, using an index on the "interests" bin. It filters the records to
+     * include only those where the "interests" list contains the specified interest
+     * value ("Food & Drink"). The results are then printed to the console,
+     * displaying the user id and their interests.
+     */
+    @Override
+    public void queryUsersByInterest() {
+        Statement stmt = new Statement();
+        stmt.setNamespace(NAMESPACE);
+        stmt.setSetName("profiles");
+        stmt.setIndexName("interests_index");
+
+        // filter by the interest value
+        String interest = "Food & Drink";
+        stmt.setFilter(Filter.contains("interests", IndexCollectionType.LIST, interest));
+
+        Log.info("Querying profiles with interest: " + interest);
+        RecordSet rs = client.query(null, stmt);
+
+        AtomicInteger recordCount = new AtomicInteger(0);
+
+        rs.forEach((KeyRecord record) -> {
+            recordCount.incrementAndGet();
+            // System.out.println(
+            // "User id: " + record.record.bins.get("id") + " interests: " +
+            // record.record.bins.get("interests"));
+        });
+        Log.info("...found " + recordCount.get() + " matching records");
+        rs.close();
+    }
+
+    /**
+     * Queries and prints user profiles created within the year 2025.
+     * 
+     * This method sets up a date range from January 1, 2025, to December 31, 2025,
+     * and queries the Aerospike database for user profiles created within this
+     * range. The results are printed to the console, displaying the user id and
+     * creation date.
+     */
+    @Override
+    public void queryUsersByCreatedDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2025, Calendar.JANUARY, 1);
+        Date startDate = calendar.getTime();
+        calendar.set(2025, Calendar.DECEMBER, 31);
+        Date endDate = calendar.getTime();
+
+        Statement stmt = new Statement();
+        stmt.setNamespace(NAMESPACE);
+        stmt.setSetName("profiles");
+        stmt.setIndexName("creation_index");
+
+        // Set the date range for the query
+        stmt.setFilter(Filter.range("createdAt", startDate.getTime(), endDate.getTime()));
+
+        Log.info("Querying profiles created between " + startDate + " and " + endDate);
+        RecordSet rs = client.query(null, stmt);
+        AtomicInteger recordCount = new AtomicInteger(0);
+
+        rs.forEach((KeyRecord record) -> {
+            recordCount.incrementAndGet();
+            // System.out.println(
+            // "User id: " + record.record.bins.get("id") + " createdAt: " +
+            // record.record.bins.get("createdAt"));
+        });
+        Log.info("...found " + recordCount.get() + " matching records");
+        rs.close();
+    }
+
+    /**
+     * Queries users by their location.
+     * 
+     * This method creates a query to find user profiles based on their location. It
+     * filters the profiles by the specified city ("Sydney" in this case) and prints
+     * out the user id and location for each matching record.
+     * 
+     * The query uses the "location_index" index on the "profiles" set in the
+     * specified namespace.
+     */
+    @Override
+    public void queryUsersByLocation() {
+        Statement stmt = new Statement();
+        stmt.setNamespace(NAMESPACE);
+        stmt.setSetName("profiles");
+        stmt.setIndexName("location_index");
+
+        // filter by the city
+        String city = "Sydney";
+        stmt.setFilter(Filter.contains("location", IndexCollectionType.MAPVALUES, city));
+
+        Log.info("Querying profiles in city: " + city);
+        RecordSet rs = client.query(null, stmt);
+
+        AtomicInteger recordCount = new AtomicInteger(0);
+
+        rs.forEach((KeyRecord record) -> {
+            recordCount.incrementAndGet();
+            // System.out.println(
+            // "User id: " + record.record.bins.get("id") + " location: " +
+            // record.record.bins.get("location"));
+        });
+        Log.info("...found " + recordCount.get() + " matching records");
+        rs.close();
     }
 
 }

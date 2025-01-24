@@ -541,4 +541,11 @@ public class RandomData {
         }
         return interests;
     }
+
+    public static LineitemStatus randomLineitemStatus() {
+        LineitemStatus[] statuses = LineitemStatus.values();
+        Random random = new Random();
+        int index = random.nextInt(statuses.length);
+        return statuses[index];
+    }
 }
