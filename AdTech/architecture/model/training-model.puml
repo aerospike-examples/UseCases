@@ -1,0 +1,51 @@
+@startuml
+
+hide circle
+hide empty members
+
+
+class UserProfile {
+    - String id
+    - Date createdAt
+    - Date updatedAt
+    - Demographics demographics
+    - List<String> interests
+    - Location location
+    - List<String> lineitemIds
+}
+
+
+
+class Demographics {
+    - String ageRange
+    - Gender gender
+    - String incomeLevel
+    - String educationLevel
+    - String employmentStatus
+    - String maritalStatus
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+    UNKNOWN
+    NONBINARY
+}
+
+class Location {
+    - String country
+    - String isoCode
+    - String region
+    - String city
+    - String postalCode
+    - double latitude
+    - double longitude
+}
+
+UserProfile *--> Demographics : has
+UserProfile *-> Location : has
+Demographics *- "1" Gender
+
+
+@enduml
