@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -141,8 +143,24 @@ public class MockDSP {
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
 
-                storageEngine.queryUsersByInterest("Food & Drink");
+                // Interests
+                List<String> interests = RandomData.iabContentCatergories();
+                System.out.println("Available interests:");
+                for (int i = 0; i < interests.size(); i++) {
+                    System.out.printf("%d: %s\n", i + 1, interests.get(i));
+                }
+                System.out.print("Select an interest by number: ");
+                Scanner scanner = new Scanner(System.in);
+                int selection = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                String interest = interests.get(selection - 1);
+                System.out.println("Selected interest: " + interest);
+                storageEngine.queryUsersByInterest(interest);
+
+                // Location
                 storageEngine.queryUsersByLocation("Sydney");
+
+                // created at Dates
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(2025, Calendar.JANUARY, 1);
                 Date startDate = calendar.getTime();
