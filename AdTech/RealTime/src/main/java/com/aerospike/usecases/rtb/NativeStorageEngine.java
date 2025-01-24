@@ -460,14 +460,13 @@ public class NativeStorageEngine implements StorageEngine {
      * displaying the user id and their interests.
      */
     @Override
-    public void queryUsersByInterest() {
+    public void queryUsersByInterest(String interest) {
         Statement stmt = new Statement();
         stmt.setNamespace(NAMESPACE);
         stmt.setSetName("profiles");
         stmt.setIndexName("interests_index");
 
         // filter by the interest value
-        String interest = "Food & Drink";
         stmt.setFilter(Filter.contains("interests", IndexCollectionType.LIST, interest));
 
         Log.info("Querying profiles with interest: " + interest);
@@ -488,19 +487,12 @@ public class NativeStorageEngine implements StorageEngine {
     /**
      * Queries and prints user profiles created within the year 2025.
      * 
-     * This method sets up a date range from January 1, 2025, to December 31, 2025,
-     * and queries the Aerospike database for user profiles created within this
-     * range. The results are printed to the console, displaying the user id and
-     * creation date.
+     * This method sets up a date range , and queries the Aerospike database for
+     * user profiles created within this range. The results are printed to the
+     * console, displaying the user id and creation date.
      */
     @Override
-    public void queryUsersByCreatedDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2025, Calendar.JANUARY, 1);
-        Date startDate = calendar.getTime();
-        calendar.set(2025, Calendar.DECEMBER, 31);
-        Date endDate = calendar.getTime();
-
+    public void queryUsersByCreatedDate(Date startDate, Date endDate) {
         Statement stmt = new Statement();
         stmt.setNamespace(NAMESPACE);
         stmt.setSetName("profiles");
@@ -527,21 +519,20 @@ public class NativeStorageEngine implements StorageEngine {
      * Queries users by their location.
      * 
      * This method creates a query to find user profiles based on their location. It
-     * filters the profiles by the specified city ("Sydney" in this case) and prints
-     * out the user id and location for each matching record.
+     * filters the profiles by the specified city and prints out the user id and
+     * location for each matching record.
      * 
      * The query uses the "location_index" index on the "profiles" set in the
      * specified namespace.
      */
     @Override
-    public void queryUsersByLocation() {
+    public void queryUsersByLocation(String city) {
         Statement stmt = new Statement();
         stmt.setNamespace(NAMESPACE);
         stmt.setSetName("profiles");
         stmt.setIndexName("location_index");
 
         // filter by the city
-        String city = "Sydney";
         stmt.setFilter(Filter.contains("location", IndexCollectionType.MAPVALUES, city));
 
         Log.info("Querying profiles in city: " + city);

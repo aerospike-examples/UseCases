@@ -302,7 +302,7 @@ public class ObjectMapperStorageEngine implements StorageEngine {
      * the user id and interests for each matching record.
      */
     @Override
-    public void queryUsersByInterest() {
+    public void queryUsersByInterest(String interest) {
         String nameSpace = mapper.getNamespace(UserProfile.class);
         String setName = mapper.getSet(UserProfile.class);
 
@@ -312,7 +312,6 @@ public class ObjectMapperStorageEngine implements StorageEngine {
         stmt.setIndexName("interests_index");
 
         // filter by the interest value
-        String interest = "Food & Drink";
         stmt.setFilter(Filter.contains("interests", IndexCollectionType.LIST, interest));
 
         Log.info("Querying profiles with interest: " + interest);
@@ -334,23 +333,16 @@ public class ObjectMapperStorageEngine implements StorageEngine {
      * Queries and prints user profiles created within the year 2025.
      * 
      * This method constructs a query to fetch user profiles from the Aerospike
-     * database where the creation date falls between January 1, 2025, and December
-     * 31, 2025. It uses the "creation_index" to filter records based on the
+     * database. It uses the "creation_index" to filter records based on the
      * "createdAt" field.
      * 
      * The results are printed to the console, displaying the user id and creation
      * date for each matching record.
      */
     @Override
-    public void queryUsersByCreatedDate() {
+    public void queryUsersByCreatedDate(Date startDate, Date endDate) {
         String nameSpace = mapper.getNamespace(UserProfile.class);
         String setName = mapper.getSet(UserProfile.class);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2025, Calendar.JANUARY, 1);
-        Date startDate = calendar.getTime();
-        calendar.set(2025, Calendar.DECEMBER, 31);
-        Date endDate = calendar.getTime();
-
         Statement stmt = new Statement();
         stmt.setNamespace(nameSpace);
         stmt.setSetName(setName);
@@ -378,15 +370,15 @@ public class ObjectMapperStorageEngine implements StorageEngine {
      * Queries and prints user profiles based on their location.
      * 
      * This method queries the Aerospike database for user profiles that are located
-     * in a specific city (in this case, "Sydney"). It uses the ObjectMapper to get
-     * the namespace and set name for the UserProfile class, constructs a query
-     * statement with a filter on the "location" field, and executes the query.
+     * in a specific city. It uses the ObjectMapper to get the namespace and set
+     * name for the UserProfile class, constructs a query statement with a filter on
+     * the "location" field, and executes the query.
      * 
      * The results are iterated over, and for each user profile found, the user id
      * and location are printed to the console.
      */
     @Override
-    public void queryUsersByLocation() {
+    public void queryUsersByLocation(String city) {
         String nameSpace = mapper.getNamespace(UserProfile.class);
         String setName = mapper.getSet(UserProfile.class);
         Statement stmt = new Statement();
@@ -395,7 +387,6 @@ public class ObjectMapperStorageEngine implements StorageEngine {
         stmt.setIndexName("location_index");
 
         // filter by the city
-        String city = "Sydney";
         stmt.setFilter(Filter.contains("location", IndexCollectionType.MAPVALUES, city));
 
         Log.info("Querying profiles in city: " + city);

@@ -2,6 +2,8 @@ package com.aerospike.usecases.rtb;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -139,9 +141,14 @@ public class MockDSP {
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
 
-                storageEngine.queryUsersByInterest();
-                storageEngine.queryUsersByLocation();
-                storageEngine.queryUsersByCreatedDate();
+                storageEngine.queryUsersByInterest("Food & Drink");
+                storageEngine.queryUsersByLocation("Sydney");
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(2025, Calendar.JANUARY, 1);
+                Date startDate = calendar.getTime();
+                calendar.set(2025, Calendar.DECEMBER, 31);
+                Date endDate = calendar.getTime();
+                storageEngine.queryUsersByCreatedDate(startDate, endDate);
             }
             break;
 

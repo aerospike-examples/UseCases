@@ -1,5 +1,7 @@
 package com.aerospike.usecases.rtb;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.aerospike.client.Record;
@@ -117,14 +119,14 @@ public interface StorageEngine {
      * user data filtered by specific interest criteria. The implementation details
      * should define how the interest-based filtering is performed.
      */
-    public void queryUsersByInterest();
+    public void queryUsersByInterest(String interest);
 
     /**
      * Queries users based on their created date. This method retrieves users who
      * were created on a specific date. The implementation details should specify
      * the date format and any other relevant parameters required for the query.
      */
-    public void queryUsersByCreatedDate();
+    public void queryUsersByCreatedDate(Date startDate, Date endDate);
 
     /**
      * Queries users based on their location. This method is intended to retrieve
@@ -132,6 +134,6 @@ public interface StorageEngine {
      * details and parameters required for the query should be defined in the
      * implementing class.
      */
-    public void queryUsersByLocation();
+    public void queryUsersByLocation(String city);
 
 }
