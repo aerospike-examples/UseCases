@@ -247,6 +247,26 @@ public class RandomData {
     }
 
     /**
+     * Retrieves the list of locations.
+     *
+     * @return a list of Location objects.
+     */
+    public static List<Location> getLocations() {
+        return locations;
+    }
+
+    /**
+     * Retrieves a list of distinct city names from the locations, sorted in
+     * alphabetical order.
+     *
+     * @return a sorted list of unique city names.
+     */
+    public static List<String> getCities() {
+        List<String> cities = locations.stream().distinct().map(Location::getCity).sorted().toList();
+        return cities;
+    }
+
+    /**
      * Generates a random Campaign object with the following properties: - A unique
      * identifier (UUID) for the campaign. - A unique identifier (UUID) for the
      * advertiser. - A name in the format "Campaign X" where X is a random number

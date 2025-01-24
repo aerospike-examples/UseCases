@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
@@ -16,6 +17,7 @@ import org.apache.commons.cli.Options;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Log;
 import com.aerospike.usecases.common.AerospikeConnector;
+import com.aerospike.usecases.model.Location;
 import com.aerospike.usecases.model.bid.BidRequest;
 import com.aerospike.usecases.model.bid.BidResponse;
 
@@ -69,6 +71,26 @@ public class MockDSP {
                 : new NativeStorageEngine(client, namespace);
         Log.info("Using " + storageEngine);
         return storageEngine;
+    }
+
+    private static String getUserSelection(List<String> options, String prompt) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please select an option:");
+        for (int i = 0; i < options.size(); i++) {
+            System.out.printf("%d: %s\n", i + 1, options.get(i));
+        }
+        int selection = -1;
+        while (selection < 1 || selection > options.size()) {
+            System.out.print(prompt);
+            if (scanner.hasNextInt()) {
+                selection = scanner.nextInt();
+            } else {
+                scanner.next(); // clear the invalid input
+            }
+        }
+        String value = options.get(selection - 1);
+        // System.out.println("Selected: " + value);
+        return value;
     }
 
     public static void main(String[] args) throws Exception {
@@ -143,22 +165,17 @@ public class MockDSP {
             try (IAerospikeClient client = connector.connect()) {
                 StorageEngine storageEngine = getStorageEngine(cl, client, connector.isUseCloud());
 
-                // Interests
+                List<String> cities = RandomData.getCities();
+                String city = getUserSelection(cities, "Choose a city: ");
+
                 List<String> interests = RandomData.iabContentCatergories();
-                System.out.println("Available interests:");
-                for (int i = 0; i < interests.size(); i++) {
-                    System.out.printf("%d: %s\n", i + 1, interests.get(i));
-                }
-                System.out.print("Select an interest by number: ");
-                Scanner scanner = new Scanner(System.in);
-                int selection = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-                String interest = interests.get(selection - 1);
-                System.out.println("Selected interest: " + interest);
+                String interest = getUserSelection(interests, "Choose an interest: ");
+
+                // Interests
                 storageEngine.queryUsersByInterest(interest);
 
                 // Location
-                storageEngine.queryUsersByLocation("Sydney");
+                storageEngine.queryUsersByLocation(city);
 
                 // created at Dates
                 Calendar calendar = Calendar.getInstance();
