@@ -362,7 +362,6 @@ public class NativeStorageEngine implements StorageEngine {
             return lineitem;
         }).collect(Collectors.toList());
         return lineitems;
-
     }
 
     /**
@@ -542,9 +541,6 @@ public class NativeStorageEngine implements StorageEngine {
 
         rs.forEach((KeyRecord record) -> {
             recordCount.incrementAndGet();
-            // System.out.println(
-            // "User id: " + record.record.bins.get("id") + " location: " +
-            // record.record.bins.get("location"));
         });
         Log.info("...found " + recordCount.get() + " matching records");
         rs.close();

@@ -2,21 +2,33 @@
 
 @startuml
 
-title Realistic RTB canonical model
+title Real-time Bidding canonical model
 
 hide circle
 
 hide empty members
 
-hide Segment
-hide Demographics
-hide Location
-hide Creative
-hide Advertiser
-hide ActivityEvent
-hide Purchase
+' hide Segment
+' hide Demographics
+' hide Location
+' hide Creative
+' hide Advertiser
+' hide ActivityEvent
+' hide Purchase
 
-class UserProfile {
+
+
+' skinparam class {
+'   BackgroundColor PaleGreen
+'   ArrowColor SeaGreen
+'   BorderColor SpringGreen
+' }
+' skinparam stereotypeCBackgroundColor YellowGreen
+
+
+
+
+class UserProfile  #LightGoldenRodYellow ##red{
   - String id
   - Date createdAt
   - Date updatedAt
@@ -29,14 +41,14 @@ class UserProfile {
   - List<String> AudienceIds
 }
 
-class Demographics {
+class Demographics  #LightGoldenRodYellow ##red{
   +String ageRange
   +String gender
   +String location
   ...etc
 }
 
-class Location {
+class Location #LightGoldenRodYellow ##red{
   +String city
   +String state
   +String country
@@ -56,13 +68,13 @@ class Purchase {
   ...etc
 }
 
-UserProfile "1" -- "1" Demographics
-UserProfile "1" -- "1" Location
-UserProfile "1" -- "1..*" ActivityEvent : activity
-UserProfile "1" -- "1..*" Purchase : purchases
+UserProfile "1" *-- "1" Demographics  #red
+UserProfile "1" *-- "1" Location #red
+UserProfile "1" *-- "1..*" ActivityEvent : activity
+UserProfile "1" *-- "1..*" Purchase : purchases
 
 
-enum LineitemStatus {
+enum LineitemStatus #LightGoldenRodYellow ##red{
     DRAFT
     ACTIVE
     PAUSED
@@ -80,7 +92,7 @@ class Campaign {
 }
 
 
-class Lineitem {
+class Lineitem #LightGoldenRodYellow ##red{
     - String id
     - String campaignId
     - Audience audience
@@ -123,84 +135,19 @@ class Creative {
 }
 
 Campaign "*" <..> "1..*" Lineitem : lineitems
-Advertiser "1" <-> "*" Campaign : campaigns
-Advertiser "*" --> "1..*" Creative : creatives
+Advertiser "1" <.> "*" Campaign : campaigns
+Advertiser "*" ..> "1..*" Creative : creatives
 Creative "*" <- "*" Lineitem : creatives
 Lineitem "*" <..> "1" Audience : audience
-LineitemStatus - Lineitem
-Lineitem "1..50" .. "*" UserProfile
-Audience "*" -> "1..*" Segment : segments
+Lineitem - LineitemStatus  #red
+Lineitem "1..50" .. "*" UserProfile   #red
+Segment "1..*" <.* "*" Audience : segments
 Audience "*" <.. "1..*" UserProfile
 
 
-
 @enduml
 
-@startuml
 
-title RTB realtime model
-
-hide circle
-
-hide empty members
-
-class Profile {
-    - String id
-    - List<Lineitem> lineitems
-    - boolean isFinished
-
-}
-
-enum LineitemStatus {
-    DRAFT
-    ACTIVE
-    PAUSED
-    FINISHED
-}
-
-
-
-class Lineitem {
-    - String id
-    - String campaignId
-    - Audience audience
-    - List<Creative> creatives
-    - Float budget
-    - DateTime startDate
-    - DateTime endDate
-    - LineitemStatus status
-}
-
-class Audience {
-    - String id
-    - String name
-    - List<Segment> segments
-}
-
-class Segment {
-  +String id
-  +String name
-  ...etc
-}
-
-class Creative {
-    - String id
-    - String name
-    - String url
-    - String format
-    - String size
-    - String type
-}
-
-Creative "*" <- "*" Lineitem : creatives
-Lineitem "*" -> "1" Audience : audience
-LineitemStatus -- Lineitem
-Lineitem "1..20" -- "*" Profile
-
-Audience "*" -> "1..*" Segment : segments
-
-
-@enduml
 
 @startuml
 
@@ -256,11 +203,11 @@ class PerformanceMetrics {
   ...etc
 }
 
-Audience "*" -> "1..*" Segment : segments
+Audience "*" .> "1..*" Segment : segments
 
 Segment "1" -- "1" Criteria
 Criteria "1" -- "1" Demographics
 Criteria "1" -- "1" BehavioralData
 Segment "1" -- "1" PerformanceMetrics
-Segment "*" - "1..*" Lineitems : lineitems
+Segment "*" . "1..*" Lineitems : lineitems
 @enduml

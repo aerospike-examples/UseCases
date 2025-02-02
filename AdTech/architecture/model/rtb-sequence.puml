@@ -1,34 +1,39 @@
 @startuml
+!pragma teoz true
 
-participant "Ad Exchange" as adExchange
-participant "DSP" as dsp
-participant "RTB bidder" as rtbBidder
-Database "Aerospike cluster" as aerospike
+participant "Ad Exchange" as adExchange #Lightpink
+participant "DSP" as dsp #LightBlue
+participant "RTB bidder" as rtbBidder #LightBlue
+Database "Aerospike cluster" as aerospike  #yellow
 
 autonumber
 
 
 
 adExchange -> dsp: Bid Request
-activate dsp
+activate dsp #LightBlue
 dsp -> rtbBidder: Bid Request
-activate rtbBidder
-rtbBidder -> aerospike: Get UserProfile
-activate aerospike
+activate rtbBidder #LightBlue
+rtbBidder -> aerospike: get UserProfile 
+note right of rtbBidder: Get opertion to fetch\nthe UserProfile previously stored\nuser profile in Aerospike
+activate aerospike #red
 aerospike --> rtbBidder: UserProfile ~ 0.8ms
 deactivate aerospike
-rtbBidder -> aerospike: Batch read active line items - max 50
-activate aerospike
-aerospike --> rtbBidder: Active line items ~5ms - 9ms
+rtbBidder -> aerospike: Batch read ACTIVE line items - max 50
+note right of rtbBidder: Batch read and Filter operation to fetch\nthe ACTIVE Lineitems from Aerospike
+activate aerospike #red
+aerospike --> rtbBidder: Active line items ~5ms - 9ms 
 deactivate aerospike
 
-rtbBidder -> rtbBidder: Choose the best linitem
+rtbBidder -> rtbBidder: Choose the best lineitem
+note right of rtbBidder: real-time Lineitem selection algorithm\nbased on targeting criteria\nand ACTIVE Lineitems
 
 rtbBidder -> rtbBidder: Create bid response
+note right of rtbBidder: Create the bid response with\nthe best lineitem and bid price
 
-rtbBidder -> dsp: Bid Response
+rtbBidder --> dsp: Bid Response
 deactivate rtbBidder
-dsp -> adExchange: Bid Response
+dsp --> adExchange: Bid Response
 deactivate dsp
 
 
