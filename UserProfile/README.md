@@ -18,7 +18,7 @@ git clone ​​https://github.com/aerospike-examples/UseCases.git
 ### Build the Project
 Open a terminal or command prompt and navigate to the root directory of the cloned repository.
 ```
-cd UseCases/AdTech/RealTime
+cd UseCases/UserProfile
 ```
 
 ### Build the project
@@ -59,7 +59,7 @@ Note that the namespace used on Aerospike Cloud by default is `aerospike_cloud`
 After building the project, you can run the application using the following command:
 
 ```
-java -jar target/RealTimeBidding-x.x.x.jar <command-line-options>
+java -jar target/DSP-x.x.x_full.jar <command-line-options>
 ```
 
 - Replace `x.x.x` with the actual version number of the application.
@@ -90,7 +90,7 @@ This command will generate:
 - 5 to 50 linitems per compaign
 - 1 creative per lineitem
 
-additionally, each linitem is connected to one or more users by storing the lineitem ID in list in the user.
+additionally, each linitem is connected to one or more users where the lineitem ID in list in the UserProfile record.
 
 
 ### 2. Bidder simulator
@@ -100,10 +100,18 @@ The bidder simulates receiving 1000 bid requests and returning a bid responses b
 - Get (read) to retrive the user profile and a list of lineitem IDs
 - Batch Get (read) to retrieve the user's lineitems with a filter for 'active' lineitems.
 
-## Typical commands for generate the simulate
+#### Typical commands for generate the simulate
 ```
 java -jar target/DSP-x.x.x.jar -c generate -h localhost:3000 
 java -jar target/DSP-x.x.x.jar -c bidder -h localhost:3000 
+
+```
+### 3. Secondary index queries
+Seondary index queries return records or metadat via value irather than by a primary key
+This example shows secondary index queries in User Profile data
+
+#### Command to execute secondary index queries
+java -jar target/DSP-x.x.x.jar -c queries -h localhost:3000 
 
 ```
 
