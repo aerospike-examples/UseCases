@@ -1,0 +1,32 @@
+@startuml
+
+actor User #red
+box "Sell Side" #LightPink  
+participant "Publisher" as Publisher
+participant "Sell Side Provider\nSSP" as SellSide
+end box
+participant "Ad Exchange" as AdExchange #lightblue
+box "Buy Side" #LightGreen
+participant "Buy Side Provider\nDSP" as BuySide
+participant "Ad Campaign" as Campaign
+end box
+actor "Advertiser/Brand" as Advertiser #Green
+
+Advertiser -> Campaign: Create Ad Campaigns
+User -> Publisher: Request to view a page
+Publisher -> SellSide: Request to sell ad space
+SellSide -> AdExchange: Request to sell ad space
+activate AdExchange #lightblue
+AdExchange -> BuySide: Bid Request to buy ad space
+BuySide -> Campaign: Find best Ad Campaign
+BuySide <-- Campaign: Best Ad Campaign
+AdExchange <-- BuySide: Bid Response
+AdExchange -> BuySide: Bid Win
+AdExchange <-- BuySide: Ad Content
+AdExchange -> SellSide: Ad Content
+deactivate AdExchange
+SellSide -> Publisher: Ad Content
+Publisher -> User: Ad Content
+
+
+@enduml
