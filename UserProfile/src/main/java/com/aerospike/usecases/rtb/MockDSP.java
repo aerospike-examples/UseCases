@@ -64,7 +64,8 @@ public class MockDSP {
 
     private static StorageEngine getStorageEngine(CommandLine cl, IAerospikeClient client, boolean useCloud) {
         String algorithm = cl.getOptionValue("algorithm", "native");
-        String namespace = useCloud ? "aerospike_cloud" : "rtb";
+        String defaultNamespace = useCloud ? "aerospike_cloud" : "rtb";
+        String namespace = cl.getOptionValue("namespace", defaultNamespace);
         // Use a system property for the Object Mapper version
         System.setProperty("rtb.namespace", namespace);
         StorageEngine storageEngine = algorithm.equalsIgnoreCase("mapper") ? new ObjectMapperStorageEngine(client)
@@ -104,6 +105,8 @@ public class MockDSP {
                 + "\t bidder -- run a bidder simulator, data must be generate before the bidder sumilator is run\n");
         options.addOption("alg", "algorithm", true,
                 "Use 'native' (default) for raw Aerospike code or 'mapper' to use the Java Object Mapper. All options which used the database can take this option");
+        options.addOption("n", "namespace", true,
+                "Aerospike namespace to use. Default: 'rtb' (or 'aerospike_cloud' when using --useCloud)");
         if (args.length == 0) {
             usage(options);
         }
